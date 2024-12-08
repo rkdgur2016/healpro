@@ -48,4 +48,14 @@ public class UserService implements UserServiceInterface, PLog{
 		return flag;
 	}
 
+	@Override
+	public int idCheck(String id) throws Exception {
+		int flag = 0;
+		
+		flag = userMapper.idCheck(id);
+		log.debug("flag : " + flag);		
+		
+		return flag;
+	}
+
 }

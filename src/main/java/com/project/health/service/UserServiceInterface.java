@@ -6,4 +6,6 @@ import com.project.health.essential.WorkDiv;
 public interface UserServiceInterface extends WorkDiv<User>{
 	
 	public int doRegister(User inVO) throws Exception;
+	
+	public int idCheck(String id) throws Exception;
 }

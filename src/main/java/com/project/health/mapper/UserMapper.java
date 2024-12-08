@@ -9,4 +9,6 @@ import com.project.health.essential.WorkDiv;
 public interface UserMapper extends WorkDiv<User>{
 	
 	public int doRegister(User inVO) throws Exception;
+	
+	public int idCheck(String id) throws Exception;
 }
