@@ -21,11 +21,11 @@
             </div>
             <div class="form-group">
                 <label for="pw">비밀번호</label>
-                <input type="password" id="pw" name="password" required>
+                <input type="password" id="pw" name="pw" required>
             </div>
             <div class="form-group">
                 <label for="pwCheck">비밀번호 확인</label>
-                <input type="password" id="pwCheck" name="password_check" required>
+                <input type="password" id="pwCheck" name="pwCheck" required>
             </div>
             <div class="form-group">
                 <label for="name">닉네임</label>
@@ -39,25 +39,23 @@
                 <label for="birth">생년월일</label>
                 <input type="date" id="birth" name="birth" required>
             </div>
-            <button type="submit" id="signupBtn" class="signup-button">회원가입</button>
+            <input type="button" id="signupBtn" class="signup-button" value="회원가입">
         </form>
     </div>
 </body>
 <script>
 	document.addEventListener("DOMContentLoaded", function(){
 		
-		const idInput = document.querySelecotr('#userId');
-		const pwInput = document.querySelector("#pw");
+		const idInput = document.querySelector("#userId");
 		const pwInput = document.querySelector("#pw");
 		const pwCheckInput = document.querySelector("#pwCheck");
 		const nameInput = document.querySelector("#name");
-		const emainInput = document.querySelector("#email");
+		const emailInput = document.querySelector("#email");
 		const birthInput = document.querySelector("#birth");
 		
 		let idCheckCount = 0;
-		let passwordCheckCount = 0;
 		
-		const signupBtn = document.querySelecotr('#signupBtn');
+		const signupBtn = document.querySelector('#signupBtn');
 		const idCheckBtn =  document.querySelector("#checkIdButton");
 		
 		//이벤트 리스너
@@ -70,8 +68,18 @@
 		});
 		
 		function join() {
+			console.log("join()");
+			
+			console.log(idInput.value);
+			console.log(pwInput.value);
+			console.log(nameInput.value);
+			console.log(emailInput.value);
+			console.log(birthInput.value);
+			
+			const date = new Date();
+			
 			const minDate = "1907-01-01";
-	        const maxDate = "2024-08-01";
+	        let maxDate = date.getDate();
 	        
 			if(isEmpty(idInput.value) == true){
 				alert("사용하실 아이디를 입력하세요.");
@@ -88,14 +96,14 @@
 				nameInput.focus();
 				return;
 			}
-			if(isEmpty(passwordInput.value) == true){
+			if(isEmpty(pwInput.value) == true){
 				alert("비밀번호를 입력하세요.");
-				passwordInput.focus();
+				pwInput.focus();
 				return;
 			}
-			if(isEmpty(passwordCheckInput.value) == true){
+			if(isEmpty(pwCheckInput.value) == true){
 				alert("비밀번호를 확인하세요");
-				passwordCheckInput.focus();
+				pwCheckInput.focus();
 				return;
 			}
 			if(isEmpty(birthInput.value) == true){
@@ -119,27 +127,51 @@
 				return;
 			}
 			
-			if(passwordInput.value !== passwordCheckInput.value){
+			if(pwInput.value !== pwCheckInput.value){
 				alert("비밀번호가 일치하는지 확인하세요.");
+				pwCheckInput.focus();
 				return;
 			}
 			
-			if(passwordInput.value.indexOf(" ") !== -1 || passwordCheckInput.value.indexOf(" ") !== -1){
+			if(pwInput.value.indexOf(" ") !== -1 || pwCheckInput.value.indexOf(" ") !== -1){
 				alert("비밀번호와 비밀번호 확인에 공백 문자가 있습니다.");
-				passwordInput.focus();
+				pwInput.focus();
 				return;
 			}
 
-			if(passwordValidation(passwordInput.value) === false ){
+			if(passwordValidation(pwInput.value) === false ){
 				alert("특수문자나 대소문자를 포함한 8~20자 이내의 비밀번호를 사용하세요."); 
+				pwInput.focus();
 				return;	
 			}
 			
-			if(passwordInput.value.length < 8 && passwordInput.value.length > 20){
+			if(pwInput.value.length < 8 && pwInput.value.length > 20){
 				alert("비밀번호는 8자 이상 20자 이하입니다."); 
+				pwInput.focus();
 				return;	
 			}
 			
+			$.ajax({
+	             type: "POST", 
+	             url:"/health/user/join.do",
+	             async:"true",
+	             dataType:"html",
+	             data:{
+	                 "userId" : idInput.value,
+	                 "userPw" : pwInput.value,
+	                 "name"   : nameInput.value,
+	                 "email"  : emailInput.value,
+	                 "birth"  : birthInput.value
+	             },
+	             success:function(response){//통신 성공
+	                 console.log(" 통신 성공 :"+response);
+	             	 alert("회원가입에 성공했습니다.");
+	             },
+	             error:function(response){//실패시 처리
+	                 console.log("통신 실패 :"+response.text);
+	             	
+	             }
+	         });
 		}
 		
         function idCheck() {
@@ -169,11 +201,6 @@
     		
     		onlyNumberAndEnglish(idInput.value);
     		
-    		let type="get";
-            let url ="/health/user/idCheck.do";
-            let async = "true";
-            let dataType = "html";
-
             if(confirm("아이디를 사용하시겠습니까?") === false)return;
 
             let params = {
@@ -185,20 +212,24 @@
             $.ajax({
                 type: "GET", 
                 url:"/health/user/idCheck.do",
-                asyn:"true",
+                async:"true",
                 dataType:"html",
                 data:{
-                    "work_div":"doInsert",
-                    "title": $("#title").val(),
-                    "div": $("#div").val(),
-                    "reg_id": $("#reg_id").val(),
-                    "contents": $("#contents").val()	
+                    "userId" : idInput.value
                 },
                 success:function(response){//통신 성공
                     console.log(" 통신 성공 :"+response);
+                	if(response.trim() == '0'){            		
+	                    idCheckCount = 1;
+	                    idInput.setAttribute("readonly", true);
+                	}else{
+                		alert("이미 존재하는 아이디입니다. 다시 시도하세요.");
+                		idInput.focus();
+                	}
                 },
                 error:function(response){//실패시 처리
-                        console.log("통신 실패 :"+response);
+                    console.log("통신 실패 :"+response.text);
+                	
                 }
             });
     	}

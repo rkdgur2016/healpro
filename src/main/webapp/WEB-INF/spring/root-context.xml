@@ -39,8 +39,8 @@
     
     <!-- HikariDataSource Bean -->
     <bean id="dataSource" class="com.zaxxer.hikari.HikariDataSource">
-        <property name="driverClassName" value="net.sf.log4jdbc.sql.jdbcapi.DriverSpy"></property>
-     	<property name="jdbcUrl" value="jdbc:log4jdbc:mariadb://192.168.219.100:13306/health"></property>
+        <property name="driverClassName" value="org.mariadb.jdbc.Driver"></property>
+     	<property name="jdbcUrl" value="jdbc:mariadb://192.168.219.103:13306/health"></property>
         <property name="username" value="root"></property>
         <property name="password" value="0000"></property>
         

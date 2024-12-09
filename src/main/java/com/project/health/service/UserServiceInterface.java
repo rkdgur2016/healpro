@@ -7,5 +7,5 @@ public interface UserServiceInterface extends WorkDiv<User>{
 	
 	public int doRegister(User inVO) throws Exception;
 	
-	public int idCheck(String id) throws Exception;
+	public int idCheck(String userid) throws Exception;
 }

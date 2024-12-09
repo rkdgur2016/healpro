@@ -9,20 +9,6 @@ public class User {
 	private String email;
 	private String birth;
 	
-	public int getUserNo() {
-		return userNo;
-	}
-	
-	public User(int userNo, String userId, String userPw, String name, String email, String birth) {
-		super();
-		this.userNo = userNo;
-		this.userId = userId;
-		this.userPw = userPw;
-		this.name = name;
-		this.email = email;
-		this.birth = birth;
-	}
-
 	public User(String userId, String userPw, String name, String email, String birth) {
 		super();
 		this.userId = userId;
@@ -31,10 +17,11 @@ public class User {
 		this.email = email;
 		this.birth = birth;
 	}
-
-	public void setUserNo(int userNo) {
-		this.userNo = userNo;
+	
+	public int getUserNo() {
+		return userNo;
 	}
+	
 	public String getUserId() {
 		return userId;
 	}

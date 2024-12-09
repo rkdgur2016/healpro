@@ -15,6 +15,8 @@ public class UserService implements UserServiceInterface, PLog{
 	@Autowired
 	UserMapper userMapper;
 	
+	public UserService() {};
+	
 	@Override
 	public int doUpdate(User inVO) throws SQLException {
 		// TODO Auto-generated method stub
@@ -49,13 +51,13 @@ public class UserService implements UserServiceInterface, PLog{
 	}
 
 	@Override
-	public int idCheck(String id) throws Exception {
+	public int idCheck(String userId) throws Exception {
 		int flag = 0;
 		
-		flag = userMapper.idCheck(id);
+		log.debug("1. param : " + userId);	
+		flag = userMapper.idCheck(userId);
 		log.debug("flag : " + flag);		
 		
 		return flag;
 	}
-
 }
