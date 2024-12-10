@@ -24,4 +24,11 @@
     	  FROM user
     	 WHERE user_id = #{userId}
     </select>
+    
+    <select id="login" parameterType="User" resultType="User">
+    	SELECT USER_NO AS userNo, USER_ID AS userId, USER_PW AS userPw, user_name as name, user_email AS email, user_birth AS birth
+  		  FROM USER
+ 		 WHERE USER_ID = #{userId}
+   	       AND USER_PW = #{userPw}
+    </select>
 </mapper>

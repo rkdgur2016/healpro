@@ -1,5 +1,6 @@
 package com.project.health.domain;
 
+
 public class User {
 	
 	private int userNo;
@@ -9,8 +10,12 @@ public class User {
 	private String email;
 	private String birth;
 	
-	public User(String userId, String userPw, String name, String email, String birth) {
+	
+	public User() {
 		super();
+	}
+
+	public User(String userId, String userPw, String name, String email, String birth) {
 		this.userId = userId;
 		this.userPw = userPw;
 		this.name = name;
@@ -18,10 +23,26 @@ public class User {
 		this.birth = birth;
 	}
 	
+	public User(String userId, String userPw) {
+		this.userId = userId;
+		this.userPw = userPw;
+	}
+	
+	public User(int userNo, String userId, String userPw, String name, String email, String birth) {
+		this.userNo = userNo;
+		this.userId = userId;
+		this.userPw = userPw;
+		this.name = name;
+		this.email = email;
+		this.birth = birth;
+	}
+
 	public int getUserNo() {
 		return userNo;
 	}
-	
+	public void setUserNo(int userNo) {
+		this.userNo = userNo;
+	}
 	public String getUserId() {
 		return userId;
 	}

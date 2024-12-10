@@ -27,10 +27,25 @@ public class UserServiceTest implements PLog{
 	UserServiceInterface userService;
 	
 	User userVO01;
+	User userVO02;
 	
 	@Before
 	public void setUp() throws Exception {
 		userVO01 = new User("lim", "1234", "강혁임", "lim@gmail.com","2001-01-16");
+		userVO02 = new User("limrkdgur2016", "SS010216!");
+	}
+	
+	@Test
+	public void login() throws Exception{
+		log.debug("┌────────────────────────────");
+		log.debug("│ login()		");
+		log.debug("└────────────────────────────");
+		
+		//1번째 유저 저장
+		User user = userService.login(userVO02);
+		log.debug("user : " + user);
+		assertEquals(user.getUserId(), userVO02.getUserId());
+		assertEquals(user.getUserPw(), userVO02.getUserPw());
 	}
 	
 	@Ignore
@@ -47,6 +62,7 @@ public class UserServiceTest implements PLog{
 		
 	}
 	
+	@Ignore
 	@Test
 	public void idCheck() throws Exception {
 		log.debug("┌────────────────────────────");

@@ -6,18 +6,98 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>회원가입</title>
-    <link rel="stylesheet" href="../resources/css/user/join.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="../resources/js/jquery_3_7_1.js"></script>
     <script src="../resources/js/essential.js"></script>
+	<style>
+		body {
+		    font-family: 'Roboto', sans-serif;
+		    background-color: #121212;
+		    margin: 0;
+		    padding: 0;
+		    color: #ffffff;
+		    min-height: 100vh;
+		}
+		.signup-container {
+		    max-width: 400px;
+		    margin: 50px auto; /* 상하 여백 50px, 좌우 자동 (가운데 정렬) */
+		    padding: 30px;
+		    background: #1e1e1e;
+		    border-radius: 10px;
+		    box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.2);
+		}
+		.main-heading {
+		    font-size: 2rem;
+		    font-weight: bold;
+		    text-align: center;
+		    color: #4CAF50;
+		    margin: 20px 0;
+		    letter-spacing: 1px;
+		}
+		
+		.signup-container h2 {
+		    text-align: center;
+		    margin-bottom: 20px;
+		    font-size: 1.8rem;
+		    color: #4CAF50;
+		}
+		.form-group {
+		    margin-bottom: 20px;
+		}
+		.form-group label {
+		    display: block;
+		    margin-bottom: 8px;
+		    font-weight: bold;
+		    color: #ffffff;
+		}
+		.form-group input {
+		    width: 100%;
+		    padding: 10px;
+		    border: 1px solid #333333;
+		    border-radius: 6px;
+		    font-size: 0.9rem;
+		    box-sizing: border-box;
+		    background-color: #333333;
+		    color: #ffffff;
+		}
+		.form-group input:focus {
+		    outline: none;
+		    border-color: #4CAF50;
+		    box-shadow: 0px 0px 5px rgba(76, 175, 80, 0.5);
+		}
+		.signup-button, #checkIdButton {
+		    width: 100%;
+		    padding: 10px;
+		    background-color: #4CAF50;
+		    border: none;
+		    color: white;
+		    border-radius: 6px;
+		    cursor: pointer;
+		    font-size: 1rem;
+		    margin-top: 10px;
+		    box-sizing: border-box;
+		}
+		.signup-button:hover, #checkIdButton:hover {
+		    background-color: #45a049;
+		}
+		#checkIdButton {
+		    flex: 1;
+		    margin-top: 0;
+		}
+	</style>
 </head>
 <body>
-    <div class="signup-container">
-        <img src="../resources/img/1698480571234.jfif" alt="아이콘" style="width: 100%; height: 100%; vertical-align: middle; margin-right: 10px; margin-bottom :8px; ">
-        <form action="#" method="post" id="signupForm" >
-            <label for="userId" style="font-weight: bold;">아이디</label>
-            <div class="form-group" style="margin-top :8px; display: flex; align-items: center; gap: 10px;">
-                <input type="text" id="userId" name="userId" required style="flex: 2;">
-                <button type="button" id="checkIdButton" style="flex: 1; background-color: #333; color: #fff; border: none; padding: 10px; border-radius: 5px; cursor: pointer;">ID 중복 체크</button>
+<jsp:include page="../header.jsp"></jsp:include>
+     <div class="signup-container">
+        <h2 class="main-heading">Welcome!</h2>
+        <img src="../resources/img/1698480571234.jfif" alt="아이콘" style="width: 100%; height: auto; margin-bottom: 20px; border-radius: 10px;">
+        <form action="#" method="post" id="signupForm">
+            <div class="form-group">
+                <label for="userId">아이디</label>
+                <div style="display: flex; gap: 10px;">
+                    <input type="text" id="userId" name="userId" required style="flex: 2;">
+                    <button type="button" id="checkIdButton">중복 체크</button>
+                </div>
             </div>
             <div class="form-group">
                 <label for="pw">비밀번호</label>
@@ -43,6 +123,8 @@
         </form>
     </div>
 </body>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+<jsp:include page="../footer.jsp"></jsp:include>
 <script>
 	document.addEventListener("DOMContentLoaded", function(){
 		
@@ -166,6 +248,7 @@
 	             success:function(response){//통신 성공
 	                 console.log(" 통신 성공 :"+response);
 	             	 alert("회원가입에 성공했습니다.");
+	             	window.location.href="/health/main/main.do";
 	             },
 	             error:function(response){//실패시 처리
 	                 console.log("통신 실패 :"+response.text);
@@ -219,7 +302,8 @@
                 },
                 success:function(response){//통신 성공
                     console.log(" 통신 성공 :"+response);
-                	if(response.trim() == '0'){            		
+                	if(response.trim() == '0'){
+                		alert("해당 아이디를 사용할 수 있습니다.");
 	                    idCheckCount = 1;
 	                    idInput.setAttribute("readonly", true);
                 	}else{

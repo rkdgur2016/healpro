@@ -10,5 +10,8 @@ public interface UserMapper extends WorkDiv<User>{
 	
 	public int doRegister(User inVO) throws Exception;
 	
+	public User login(User inVO) throws Exception;
+	
 	public int idCheck(String userId) throws Exception;
+	
 }

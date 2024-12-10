@@ -28,6 +28,7 @@ public class UserMapperTest implements PLog{
 	UserMapper userMapper;
 	
 	User userVO01;
+	User userVO02;
 	
 	@Before
 	public void setUp() throws Exception {
@@ -36,8 +37,22 @@ public class UserMapperTest implements PLog{
 		log.debug("└──────────────────────────────┘");
 		
 		userVO01 = new User("limrkdgur2016", "1234", "강혁임", "limrkdgur2016@gmail.com","2001-01-16");
+		userVO02 = new User("limrkdgur2016", "SS010216!");
 	}
-
+	
+	@Test
+	public void login() throws Exception{
+		log.debug("┌────────────────────────────");
+		log.debug("│ login()		");
+		log.debug("└────────────────────────────");
+		
+		//1번째 유저 저장
+		User user = userMapper.login(userVO02);
+		log.debug("user : " + user);
+		assertEquals(user.getUserId(), userVO02.getUserId());
+		assertEquals(user.getUserPw(), userVO02.getUserPw());
+	}
+	
 	@Ignore
 	@Test
 	public void join() throws Exception {
@@ -52,6 +67,7 @@ public class UserMapperTest implements PLog{
 		
 	}
 	
+	@Ignore
 	@Test
 	public void idCheck() throws Exception {
 		log.debug("┌────────────────────────────");

@@ -6,7 +6,9 @@
     <settings>
         <setting name="logImpl" value="LOG4J2"/>
     </settings>
+    
 	<typeAliases>
 		<typeAlias alias="User" type="com.project.health.domain.User"/>
+		<typeAlias alias="Bmi" type="com.project.health.domain.Bmi"/>
     </typeAliases>
 </configuration>

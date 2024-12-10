@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.project.health.mapper.BmiMapper">
+
+	<select id="bmiList" parameterType="int" resultType="Bmi">
+    	SELECT USER_NO AS userNo, 
+				height AS height, 
+				weight AS weight, 
+				bmi as bmi, 
+				state AS state,
+				DATE_FORMAT(date, '%Y-%m-%d %T') AS date
+  		  FROM USER_BMI
+ 		 WHERE user_no = #{userNo}
+ 		 ORDER BY date DESC
+ 		 LIMIT 15
+    </select>
+    
+    <insert id="bmiRecord" parameterType="Bmi">
+    	INSERT INTO USER_BMI(
+			 USER_NO,
+			 HEIGHT,
+			 WEIGHT,
+			 BMI,
+			 STATE,
+			 DATE
+		 )VALUES (
+			#{userNo},
+			#{height}, 
+			#{weight}, 
+			#{bmi},
+			#{state},
+			DATE_FORMAT(now(), '%Y-%m-%d %T')
+		 )
+    </insert>
+    
+</mapper>
