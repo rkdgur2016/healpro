@@ -12,9 +12,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.project.health.domain.Bmi;
+import com.project.health.domain.Exercise;
+import com.project.health.domain.ExerciseCategory;
+import com.project.health.domain.ExercisePart;
 import com.project.health.domain.User;
 import com.project.health.essential.PLog;
 import com.project.health.service.BmiService;
+import com.project.health.service.ExerciseService;
 
 @Controller
 @RequestMapping("main")
@@ -22,6 +26,9 @@ public class MainPageController implements PLog{
 	
 	@Autowired
 	BmiService bmiService;
+	
+	@Autowired
+	ExerciseService exerciseService;
 	
 	public MainPageController() {
 		log.debug("┌───────────────────────────");
@@ -44,6 +51,24 @@ public class MainPageController implements PLog{
 		log.debug("flag : " + flag);
 		
 		return flag;
+	}
+	
+	@RequestMapping(value="/selectPart.do",method = RequestMethod.POST)
+	@ResponseBody
+	public List<Exercise> selectPart(int id) throws Exception{
+		
+		List<Exercise> exerciseList = exerciseService.selectExercise(id);
+		
+		return exerciseList;
+	}
+	
+	@RequestMapping(value="/selectCategory.do",method = RequestMethod.POST)
+	@ResponseBody
+	public List<ExercisePart> selectCategory(int id) throws Exception{
+		
+		List<ExercisePart> partList = exerciseService.selectPart(id);
+		
+		return partList;
 	}
 	
 	@RequestMapping(value = "/main.do", method = RequestMethod.GET, produces = "text/plain;charset=UTF-8")
@@ -69,6 +94,10 @@ public class MainPageController implements PLog{
 	    } else {
 	        log.debug("세션이 없습니다.");
 	    }
+		
+		List<ExerciseCategory> category = exerciseService.selectCategory();
+		model.addAttribute("exerciseCategory", category);
+		
 		return viewName;
 	}
 }

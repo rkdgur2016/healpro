@@ -1,6 +1,10 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@page import="com.project.health.domain.Bmi"%>
+<%@page import="com.project.health.domain.Exercise"%>
+<%@page import="com.project.health.domain.ExercisePart"%>
+<%@page import="com.project.health.domain.ExerciseCategory"%>
+<%@page import="com.project.health.domain.ExerciseFinal"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html lang="ko">
@@ -181,126 +185,152 @@
 </head>
 <body>
 	<jsp:include page="../header.jsp"></jsp:include>
-  	<!-- 메인 페이지 -->
-  	<div class="container mt-4"> <!-- 여기에 mt-4 클래스를 추가하여 여백을 설정 -->
-    	<div class="row">
-	      	<!-- BMI 측정기 -->
-      		<div class="col-md-6">
-		        <div class="card">
-	          		<div class="card-body">
-		            	<h6 class="card-title text-center">BMI 계산기</h6>
-		            <div class="row g-1">
-		              <div class="col-6">
-		                <input type="number" id="height" class="form-control" placeholder="키(cm)">
-		              </div>
-		              <div class="col-6">
-		                <input type="number" id="weight" class="form-control" placeholder="몸무게(kg)">
-		              </div>
-	            	</div>
-		            <div class="d-flex justify-content-between mt-2">
-		              <input type="button" class="btn btn-primary btn-sm" id="calculateBMI" value="계산">
-		              <input type="button" class="btn btn-secondary btn-sm" id="saveBMI" value="기록">
-		            </div>
-		            <div id="bmiResult" class="result mt-2">BMI : <a id="bmiResultA"></a></div>
-		            <div id="BMI_category" class="result mt-2">비만도 : <a id="BMI_categoryA"></a></div>
-	          	</div>
-        	</div>
-	        <!-- BMI 지수 표시 -->
-			<div class="card mt-3">
-				<div class="card-body">
-				<h6 class="card-title text-center">BMI 지수</h6>
-					<div class="bmi-scale">
-					<div id="bmiIndicator" class="bmi-indicator"></div>
-						<div class="bmi-category" style="flex-grow: 1;">
-							<div class="bmi-label">저체중</div>
-							<div class="bmi-range">&lt; 18.5</div>
-						</div>
-					<div class="bmi-category" style="flex-grow: 1;">
-						<div class="bmi-label">정상</div>
-						<div class="bmi-range">18.5 - 23.0</div>
-					</div>
-					<div class="bmi-category" style="flex-grow: 1;">
-						<div class="bmi-label">과체중</div>
-						<div class="bmi-range">23 - 25</div>
-					</div>
-					<div class="bmi-category" style="flex-grow: 1;">
-						<div class="bmi-label">비만</div>
-						<div class="bmi-range">&ge; 25</div>
-					</div>
-				  </div>
-				</div>
-			</div>
-	        <!-- BMI 기록 -->
-	        <div class="card mt-3">
-				<div class="card-body">
-			  	<h6 class="card-title text-center">BMI 기록</h6>
-					<div class="table-responsive">
-						<table class="table table-dark table-striped table-sm">
-							<thead>
-								<tr>
-									<th>날짜</th>
-									<th>키 (cm)</th>
-									<th>몸무게 (kg)</th>
-									<th>BMI</th>
-									<th>비만도</th>
-								</tr>
-								<c:forEach var="bmi" items="${bmiList}">
-								    <tr>
-								        <th>${bmi.date}</th>
-								        <th>${bmi.height}</th>
-								        <th>${bmi.weight}</th>
-								        <th>${bmi.bmi}</th>
-								        <th>${bmi.state}</th>
-								    </tr>
-								</c:forEach>
-							</thead>
-						</table>
-					</div>
-				</div>
-			</div>
-      	</div>
-		<!-- 운동 타이머 -->
-		<div class="col-md-6">
-		  <div class="card">
-		    <div class="card-body">
-		      <h6 class="card-title text-center">운동 타이머</h6>
-		      <div class="row g-1">
-		        <div class="col-4">
-		          <input type="number" id="minutes" class="form-control" placeholder="분">
-		        </div>
-		        <div class="col-4">
-		          <input type="number" id="seconds" class="form-control" placeholder="초">
-		        </div>
-		        <div class="col-4">
-		          <input type="number" id="reps" class="form-control" placeholder="반복">
-		        </div>
-		      </div>
-		      <button class="btn btn-primary btn-sm w-100 mt-2" onclick="startTimer()">시작</button>
-		      <div class="text-center mt-2">
-		        <div id="timerDisplay" class="fw-bold">00:00</div>
-		        <small id="timerStatus">대기 중</small>
-		      </div>
-		    </div>
-		  </div>
-		</div>
-		<!-- 운동 추천 섹션 -->
-		<div class="card col-md-6">
-			<div class="card-body">
-				<h6 class="card-title text-center">운동 추천 리스트</h6>
-				<div class="form-group">
-				  <label for="goalSelect">운동 목표 선택</label>
-				  <select id="goalSelect" class="form-select" onchange="updateExerciseList()">
-				    <option value="">목표를 선택하세요</option>
-				    <option value="체중감량">체중 감량</option>
-				    <option value="근육증가">근육 증가</option>
-				    <option value="체력향상">체력 향상</option>
-				  </select>
-				</div>
-		  		<ul id="exerciseList" class="list-group mt-2"></ul>
-			</div>
-		</div>
-	</div><!-- row 끝 -->
-</div> <!-- .container 끝 -->
+  	<div class="container mt-4">
+        <div class="row">
+            <!-- BMI 측정기 -->
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h6 class="card-title text-center">BMI 계산기</h6>
+                        <div class="row g-1">
+                            <div class="col-6">
+                                <input type="number" id="height" class="form-control" placeholder="키(cm)">
+                            </div>
+                            <div class="col-6">
+                                <input type="number" id="weight" class="form-control" placeholder="몸무게(kg)">
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-between mt-2">
+                            <input type="button" class="btn btn-primary btn-sm" id="calculateBMI" value="계산">
+                            <input type="button" class="btn btn-secondary btn-sm" id="saveBMI" value="기록">
+                        </div>
+                        <div id="bmiResult" class="result mt-2">BMI : <a id="bmiResultA"></a></div>
+                        <div id="BMI_category" class="result mt-2">비만도 : <a id="BMI_categoryA"></a></div>
+                    </div>
+                </div>
+
+                <!-- BMI 지수 표시 -->
+                <div class="card mt-3">
+                    <div class="card-body">
+                        <h6 class="card-title text-center">BMI 지수</h6>
+                        <div class="bmi-scale">
+                            <div id="bmiIndicator" class="bmi-indicator"></div>
+                            <div class="bmi-category" style="flex-grow: 1;">
+                                <div class="bmi-label">저체중</div>
+                                <div class="bmi-range">&lt; 18.5</div>
+                            </div>
+                            <div class="bmi-category" style="flex-grow: 1;">
+                                <div class="bmi-label">정상</div>
+                                <div class="bmi-range">18.5 - 23.0</div>
+                            </div>
+                            <div class="bmi-category" style="flex-grow: 1;">
+                                <div class="bmi-label">과체중</div>
+                                <div class="bmi-range">23 - 25</div>
+                            </div>
+                            <div class="bmi-category" style="flex-grow: 1;">
+                                <div class="bmi-label">비만</div>
+                                <div class="bmi-range">&ge; 25</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- BMI 기록 -->
+                <div class="card mt-3">
+                    <div class="card-body">
+                        <h6 class="card-title text-center">BMI 기록</h6>
+                        <div class="table-responsive">
+                            <table class="table table-dark table-striped table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>날짜</th>
+                                        <th>키 (cm)</th>
+                                        <th>몸무게 (kg)</th>
+                                        <th>BMI</th>
+                                        <th>비만도</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <c:forEach var="bmi" items="${bmiList}">
+                                        <tr>
+                                            <td>${bmi.date}</td>
+                                            <td>${bmi.height}</td>
+                                            <td>${bmi.weight}</td>
+                                            <td>${bmi.bmi}</td>
+                                            <td>${bmi.state}</td>
+                                        </tr>
+                                    </c:forEach>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 운동 타이머 및 추천 -->
+            <div class="col-md-6">
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title text-center mb-4">운동 타이머</h5>
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label for="exercise_timer" class="form-label">운동 시간</label>
+                    <div class="input-group">
+                        <input type="number" id="exercise_minutes" class="form-control" placeholder="분">
+                        <input type="number" id="exercise_seconds" class="form-control" placeholder="초">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <label for="break_timer" class="form-label">휴식 시간</label>
+                    <div class="input-group">
+                        <input type="number" id="break_minutes" class="form-control" placeholder="분">
+                        <input type="number" id="break_seconds" class="form-control" placeholder="초">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <label for="reps" class="form-label">반복 횟수</label>
+                    <input type="number" id="reps" class="form-control" placeholder="반복">
+                </div>
+            </div>
+            <button class="btn btn-primary w-100 mt-4" id="startTimer">
+                <i class="fas fa-play me-2"></i>타이머 시작
+            </button>
+            <div class="text-center mt-4">
+                <div id="timerDisplay" class="display-4 fw-bold">00:00</div>
+                <div id="timerStatus" class="text-muted">대기 중</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+                <!-- 중앙 이미지 섹션 -->
+                <div class="card mt-3">
+                    <div class="card-body text-center">
+                        <img src="../resources/img/1698480571234.jfif" alt="exercise_img" style="max-width: 400px; max-height: 300px; width: auto; height: auto; object-fit: contain;">
+                    </div>
+                </div>
+
+                <!-- 운동 추천 섹션 -->
+                <div class="card mt-3">
+                    <div class="card-body">
+                        <h6 class="card-title text-center">운동 추천 리스트</h6>
+                        <div class="form-group">
+                            <label for="exercise_category">운동 종류를 선택하세요.</label>
+                            <select id="exercise_category" class="form-select">
+                                <option value="" hidden>종류를 선택하세요.</option>
+                                <c:forEach var="exerciseCategory" items="${exerciseCategory}">
+                                    <option value="${exerciseCategory.id}">${exerciseCategory.name}</option>
+                                </c:forEach>
+                            </select>
+                            <select id="exercise_part" class="form-select mt-2" style="display:none;"></select>
+                            <select id="exercise" class="form-select mt-2" style="display:none;"></select>
+                        </div>
+                        <ul id="exerciseList" class="list-group mt-2"></ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
@@ -312,6 +342,10 @@
 		
 		const calculateBMIBtn = document.querySelector("#calculateBMI");
 		const saveBMIBtn = document.querySelector("#saveBMI");
+		const selectCategoryBtn = document.querySelector("#exercise_category");
+		const selectPartBtn = document.querySelector("#exercise_part");
+		const exerciseBtn = document.querySelector("#exercise");
+		const startTimerBtn = document.querySelector("#startTimer");
 		
 		calculateBMIBtn.addEventListener('click', function(event){
 			console.log("calculateBMIBtn click");
@@ -321,6 +355,30 @@
 		saveBMIBtn.addEventListener('click', function(event){
 			console.log("saveBMIBtn click");
 			saveBMI();
+		});
+		
+		selectCategoryBtn.addEventListener('change', function(event){
+			console.log("selectCategoryBtn click");			
+			categoryOption = event.target.value
+			console.log("option value : " + categoryOption);
+			selectCategory(categoryOption);
+		});
+		
+		selectPartBtn.addEventListener('change', function(event){
+			console.log("selectPartBtn click");
+			partOption = event.target.value
+			console.log("option value : " + partOption);
+			selectPart(partOption);
+		});
+		
+		exerciseBtn.addEventListener('change', function(event){
+			console.log("exerciseBtn click");
+			imgLoading();
+		});
+		
+		startTimerBtn.addEventListener('click', function(event){
+			console.log("startTimerBtn click");
+			startTimer();
 		});
 		
     	// BMI 계산 함수
@@ -376,6 +434,7 @@
 		function saveBMI() {
 			const bmiResult = document.querySelector('#bmiResultA').innerText;
 			const bmiCategory = document.querySelector('#BMI_categoryA').innerText;
+			const userNo = "${user != null ? user.userNo : null}";
 			
 			console.log("bmiResult : " + bmiResult);
 			console.log("bmiCategory : " + bmiCategory);
@@ -387,7 +446,7 @@
 		             async:"true",
 		             dataType:"html",
 		             data:{
-		                 "userNo" : ${user.userNo},
+		                 "userNo" : userNo,
 		                 "height" : height.value,
 		                 "weight" : weight.value,
 		                 "bmi" : bmiResult,
@@ -438,6 +497,177 @@
 					}
 			}, 1000);
     	}
+		
+		function selectCategory(categoryOption) {
+			
+			if (categoryOption !== null) {
+				$.ajax({
+		             type: "POST", 
+		             url:"/health/main/selectCategory.do",
+		             async:"true",
+		             dataType:"html",
+		             data:{
+		                 "id" : categoryOption
+		             },             	 
+		             success:function(response){//통신 성공
+		                 console.log(" 통신 성공 : " + response);
+		             	
+		             	// exercise_part <select>에 동적으로 옵션 추가
+		                 const exercisePartSelect = document.querySelector("#exercise_part");
+		                 exercisePartSelect.innerHTML = ""; // 기존 옵션 초기화
+
+		                 // 기본 옵션 추가
+		                 const defaultOption = document.createElement("option");
+		                 defaultOption.value = "";
+		                 defaultOption.textContent = "운동 부위를 선택하세요.";
+		                 exercisePartSelect.appendChild(defaultOption);
+
+		                 // 응답 데이터에서 exercisePart를 이용하여 옵션 추가
+		                 const parsingData = JSON.parse(response)
+		                 parsingData.forEach(function (exercisePart) {
+		                     const option = document.createElement("option");
+		                     option.value = exercisePart.id; // ExercisePart의 id 사용
+		                     option.textContent = exercisePart.name; // ExercisePart의 name 사용
+		                     exercisePartSelect.appendChild(option);
+		                 });
+
+		                 // exercise_part <select>를 표시
+		                 exercisePartSelect.style.display = "block";
+		                 
+			         },
+		             error:function(response){//실패시 처리
+		                 console.log("통신 실패 :"+response.text);
+		                 alert("통신에 실패했습니다.");
+		             }
+		         });
+				
+				 
+			} else {
+			  alert("카테고리를 선택해주세요.");
+			}
+			
+		}
+		
+		function selectPart(partOption) {
+			if (categoryOption !== null) {
+				$.ajax({
+		             type: "POST", 
+		             url:"/health/main/selectPart.do",
+		             async:"true",
+		             dataType:"html",
+		             data:{
+		                 "id" : partOption
+		             },             	 
+		             success:function(response){//통신 성공
+		                 console.log(" 통신 성공 : " + response);
+		             	
+		             	// exercise_part <select>에 동적으로 옵션 추가
+		                 const exerciseSelect = document.querySelector("#exercise");
+		                 exerciseSelect.innerHTML = ""; // 기존 옵션 초기화
+
+		                 // 기본 옵션 추가
+		                 const defaultOption = document.createElement("option");
+		                 defaultOption.value = "";
+		                 defaultOption.textContent = "운동 종류를 선택하세요.";
+		                 exerciseSelect.appendChild(defaultOption);
+
+		                 // 응답 데이터에서 exercisePart를 이용하여 옵션 추가
+		                 const parsingData = JSON.parse(response)
+		                 parsingData.forEach(function (exercise) {
+		                     const option = document.createElement("option");
+		                     option.value = exercise.id; 
+		                     option.textContent = exercise.name; 
+		                     exerciseSelect.appendChild(option);
+		                 });
+
+		                 // exercise_part <select>를 표시
+		                 exerciseSelect.style.display = "block";
+		                 
+		                 
+			         },
+		             error:function(response){//실패시 처리
+		                 console.log("통신 실패 :"+response.text);
+		                 alert("통신에 실패했습니다.");
+		             }
+		         });
+				
+				 
+			} else {
+			  alert("운동 부위를 선택해주세요.");
+			}
+			
+			 
+		}
+		    
+		function imgLoading() {
+			
+			const exerciseCategoryText = $("#exercise_category option:selected").text();
+            const exercisePartText = $("#exercise_part option:selected").text();
+            const exerciseText = $("#exercise option:selected").text();
+            
+            console.log("exerciseCategoryText : " + exerciseCategoryText);
+            console.log("exercisePartText : " + exercisePartText);
+            console.log("exerciseText : " + exerciseText);
+            
+            const contextPath = "../resources/img/"
+            const fullPath = contextPath + exerciseCategoryText + "/" + exercisePartText + "/" +exerciseText + ".png";
+            
+            const exerciseImage = document.querySelector("img[alt='exercise_img']");
+            exerciseImage.src = fullPath;
+		}
+		
+		let exerciseTime, breakTime, repetitions;
+		let currentRep = 1;
+		let isExercise = true;
+		let timer;
+
+		function startTimer() {
+		    exerciseTime = parseInt(document.getElementById('exercise_minutes').value) * 60 + parseInt(document.getElementById('exercise_seconds').value);
+		    breakTime = parseInt(document.getElementById('break_minutes').value) * 60 + parseInt(document.getElementById('break_seconds').value);
+		    repetitions = parseInt(document.getElementById('reps').value);
+
+		    if (isNaN(exerciseTime) || isNaN(breakTime) || isNaN(repetitions) || exerciseTime <= 0 || breakTime <= 0 || repetitions <= 0) {
+		        alert('모든 필드를 올바르게 입력해주세요.');
+		        return;
+		    }
+
+		    currentRep = 1;
+		    isExercise = true;
+		    updateTimerDisplay(exerciseTime);
+		    document.getElementById('timerStatus').textContent = `운동 중 (${currentRep}/${repetitions})`;
+		    timer = setInterval(updateTimer, 1000);
+		}
+
+		function updateTimer() {
+		    let currentTime = parseInt(document.getElementById('timerDisplay').textContent);
+		    if (currentTime > 0) {
+		        updateTimerDisplay(currentTime - 1);
+		    } else {
+		        if (isExercise) {
+		            isExercise = false;
+		            updateTimerDisplay(breakTime);
+		            document.getElementById('timerStatus').textContent = `휴식 중 (${currentRep}/${repetitions})`;
+		        } else {
+		            currentRep++;
+		            if (currentRep > repetitions) {
+		                clearInterval(timer);
+		                document.getElementById('timerStatus').textContent = '완료!';
+		                return;
+		            }
+		            isExercise = true;
+		            updateTimerDisplay(exerciseTime);
+		            document.getElementById('timerStatus').textContent = `운동 중 (${currentRep}/${repetitions})`;
+		        }
+		    }
+		}
+
+		function updateTimerDisplay(time) {
+		    let minutes = Math.floor(time / 60);
+		    let seconds = time % 60;
+		    document.getElementById('timerDisplay').textContent = 
+		        `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+		}
+
 	});
 </script>
 <!-- Footer -->

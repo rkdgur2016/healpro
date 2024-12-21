@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.project.health.mapper.ExerciseMapper">
+	
+	<select id="selectCategory" resultType="ExerciseCategory">
+		SELECT id, name
+  		  FROM EXERCISE_CATEGORY
+	</select>
+	
+	<select id="selectPart" parameterType="int" resultType="ExercisePart">
+		SELECT p.id as id, p.name as name
+		  FROM EXERCISE_CATEGORY c, EXERCISE_PART p
+		 WHERE c.id = p.category_id 
+		   AND c.id = #{id}
+   	</select>
+   	
+   	<select id="selectExercise" parameterType="int" resultType="Exercise">
+   		SELECT e.id as id, e.name as name
+		  FROM EXERCISE e, EXERCISE_PART p
+		 WHERE e.part_id = p.id 
+		   AND p.id = #{id}
+   	</select>
+   	
+</mapper>
