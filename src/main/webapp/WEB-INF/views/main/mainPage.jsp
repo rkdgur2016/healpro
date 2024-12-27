@@ -181,6 +181,8 @@
   transform: translateX(-50%);
   transition: left 0.3s ease;
 }
+
+
 	</style>
 </head>
 <body>
@@ -266,49 +268,47 @@
                     </div>
                 </div>
             </div>
-
             <!-- 운동 타이머 및 추천 -->
             <div class="col-md-6">
-    <div class="card">
-        <div class="card-body">
-            <h5 class="card-title text-center mb-4">운동 타이머</h5>
-            <div class="row g-3">
-                <div class="col-md-6">
-                    <label for="exercise_timer" class="form-label">운동 시간</label>
-                    <div class="input-group">
-                        <input type="number" id="exercise_minutes" class="form-control" placeholder="분">
-                        <input type="number" id="exercise_seconds" class="form-control" placeholder="초">
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <label for="break_timer" class="form-label">휴식 시간</label>
-                    <div class="input-group">
-                        <input type="number" id="break_minutes" class="form-control" placeholder="분">
-                        <input type="number" id="break_seconds" class="form-control" placeholder="초">
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <label for="reps" class="form-label">반복 횟수</label>
-                    <input type="number" id="reps" class="form-control" placeholder="반복">
-                </div>
-            </div>
-            <button class="btn btn-primary w-100 mt-4" id="startTimer">
-                <i class="fas fa-play me-2"></i>타이머 시작
-            </button>
-            <div class="text-center mt-4">
-                <div id="timerDisplay" class="display-4 fw-bold">00:00</div>
-                <div id="timerStatus" class="text-muted">대기 중</div>
-            </div>
-        </div>
-    </div>
-</div>
-
-                <!-- 중앙 이미지 섹션 -->
-                <div class="card mt-3">
-                    <div class="card-body text-center">
-                        <img src="../resources/img/1698480571234.jfif" alt="exercise_img" style="max-width: 400px; max-height: 300px; width: auto; height: auto; object-fit: contain;">
-                    </div>
-                </div>
+			    <div class="card">
+			        <div class="card-body">
+			            <h5 class="card-title text-center mb-4">운동 타이머</h5>
+			            <div class="row g-3">
+			                <div class="col-md-6">
+			                    <label for="exercise_timer" class="form-label">운동 시간</label>
+			                    <div class="input-group">
+			                        <input type="number" id="exercise_minutes" class="form-control" placeholder="분">
+			                        <input type="number" id="exercise_seconds" class="form-control" placeholder="초">
+			                    </div>
+			                </div>
+			                <div class="col-md-6">
+			                    <label for="break_timer" class="form-label">휴식 시간</label>
+			                    <div class="input-group">
+			                        <input type="number" id="break_minutes" class="form-control" placeholder="분">
+			                        <input type="number" id="break_seconds" class="form-control" placeholder="초">
+			                    </div>
+			                </div>
+			                <div class="col-md-6">
+			                    <label for="reps" class="form-label">반복 횟수</label>
+			                    <input type="number" id="reps" class="form-control" placeholder="반복">
+			                </div>
+			            </div>
+			            <button class="btn btn-primary w-100 mt-4" id="startTimer">
+			                <i class="fas fa-play me-2"></i>타이머 시작
+			            </button>
+			            <div class="text-center mt-4">
+			                <div id="timerDisplay" class="display-4 fw-bold">00:00</div>
+			                <div id="timerStatus" class="display-7 fw-bold">대기 중</div>
+			            </div>
+			        </div>
+			    </div>
+			</div>
+			<!-- 중앙 이미지 섹션 -->
+			<div class="card mt-3">
+			    <div class="card-body text-center">
+			        <img src="../resources/img/1698480571234.jfif" alt="exercise_img" style="max-width: 400px; max-height: 300px; width: auto; height: auto; object-fit: contain;">
+			    </div>
+			</div>
 
                 <!-- 운동 추천 섹션 -->
                 <div class="card mt-3">
@@ -345,7 +345,6 @@
 		const selectCategoryBtn = document.querySelector("#exercise_category");
 		const selectPartBtn = document.querySelector("#exercise_part");
 		const exerciseBtn = document.querySelector("#exercise");
-		const startTimerBtn = document.querySelector("#startTimer");
 		
 		calculateBMIBtn.addEventListener('click', function(event){
 			console.log("calculateBMIBtn click");
@@ -376,7 +375,7 @@
 			imgLoading();
 		});
 		
-		startTimerBtn.addEventListener('click', function(event){
+		document.getElementById("startTimer").addEventListener('click', function(event){
 			console.log("startTimerBtn click");
 			startTimer();
 		});
@@ -616,37 +615,42 @@
             exerciseImage.src = fullPath;
 		}
 		
-		let exerciseTime, breakTime, repetitions;
-		let currentRep = 1;
-		let isExercise = true;
-		let timer;
-
+		const exerciseMinute = document.getElementById("exercise_minutes");
+		const exerciseSecond = document.getElementById("exercise_seconds");
+		
+		const breakMinute = document.getElementById("break_minutes");
+		const breakSecond = document.getElementById("break_seconds");
+		
+		const reps = document.getElementById("reps");
+		
+		let exerciseTime, breakTime, repetitions, currentRep, isExercise, timer;
+		
 		function startTimer() {
-		    exerciseTime = parseInt(document.getElementById('exercise_minutes').value) * 60 + parseInt(document.getElementById('exercise_seconds').value);
-		    breakTime = parseInt(document.getElementById('break_minutes').value) * 60 + parseInt(document.getElementById('break_seconds').value);
-		    repetitions = parseInt(document.getElementById('reps').value);
-
-		    if (isNaN(exerciseTime) || isNaN(breakTime) || isNaN(repetitions) || exerciseTime <= 0 || breakTime <= 0 || repetitions <= 0) {
-		        alert('모든 필드를 올바르게 입력해주세요.');
-		        return;
-		    }
-
+			//운동시간, 브레이크 시간 받고
+			//운동 시간 끝나면 브레이크 시간 시작하고 reps만큼 반복
+			
+		    exerciseTime = (Number(exerciseMinute.value) * 60) + Number(exerciseSecond.value);
+		    breakTime = (Number(breakMinute.value) * 60) + Number(breakSecond.value);
+		    repetitions = Number(reps);
+			
 		    currentRep = 1;
 		    isExercise = true;
-		    updateTimerDisplay(exerciseTime);
-		    document.getElementById('timerStatus').textContent = `운동 중 (${currentRep}/${repetitions})`;
+		    updateTimerDisplay(exerciseTime, breakTime, repetitions);
+		    document.getElementById('timerStatus').textContent = "운동 중 " + currentRep + "/" + repetitions;
 		    timer = setInterval(updateTimer, 1000);
 		}
+		
 
 		function updateTimer() {
-		    let currentTime = parseInt(document.getElementById('timerDisplay').textContent);
+		    let currentTime = Number(document.getElementById('timerDisplay').textContent.replace(':', ''));
 		    if (currentTime > 0) {
-		        updateTimerDisplay(currentTime - 1);
+		        currentTime--;
+		        updateTimerDisplay(currentTime);
 		    } else {
 		        if (isExercise) {
 		            isExercise = false;
-		            updateTimerDisplay(breakTime);
-		            document.getElementById('timerStatus').textContent = `휴식 중 (${currentRep}/${repetitions})`;
+		            currentTime = breakTime;
+		            document.getElementById('timerStatus').textContent = '휴식 중 (' + currentRep + '/' + repetitions + ')';
 		        } else {
 		            currentRep++;
 		            if (currentRep > repetitions) {
@@ -655,17 +659,20 @@
 		                return;
 		            }
 		            isExercise = true;
-		            updateTimerDisplay(exerciseTime);
-		            document.getElementById('timerStatus').textContent = `운동 중 (${currentRep}/${repetitions})`;
+		            currentTime = exerciseTime;
+		            document.getElementById('timerStatus').textContent = '운동 중 (' + currentRep + '/' + repetitions + ')';
 		        }
+		        updateTimerDisplay(currentTime);
 		    }
 		}
 
-		function updateTimerDisplay(time) {
-		    let minutes = Math.floor(time / 60);
-		    let seconds = time % 60;
+		function updateTimerDisplay(exercisetime, breakTime, repetitions) {
+		    let minutes = Math.floor(exercisetime / 60);
+		    console.log("minutes : " + minutes);
+		    let seconds = exercisetime % 60;
+		    console.log("seconds : " + seconds);
 		    document.getElementById('timerDisplay').textContent = 
-		        `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+		        minutes.toString().padStart(2, '0') + " : " + seconds.toString().padStart(2, '0');
 		}
 
 	});
