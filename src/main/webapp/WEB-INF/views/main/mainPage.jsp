@@ -296,6 +296,9 @@
 			            <button class="btn btn-primary w-100 mt-4" id="startTimer">
 			                <i class="fas fa-play me-2"></i>타이머 시작
 			            </button>
+			            <button class="btn btn-secondary w-100 mt-4" id="pauseTimer">
+			                <i class="fas fa-play me-2"></i>타이머 중지
+			            </button>
 			            <div class="text-center mt-4">
 			                <div id="timerDisplay" class="display-4 fw-bold">00:00</div>
 			                <div id="timerStatus" class="display-7 fw-bold">대기 중</div>
@@ -617,63 +620,79 @@
 		
 		const exerciseMinute = document.getElementById("exercise_minutes");
 		const exerciseSecond = document.getElementById("exercise_seconds");
-		
 		const breakMinute = document.getElementById("break_minutes");
 		const breakSecond = document.getElementById("break_seconds");
-		
 		const reps = document.getElementById("reps");
-		
-		let exerciseTime, breakTime, repetitions, currentRep, isExercise, timer;
-		
+		const timerDisplay = document.getElementById("timerDisplay");
+		const timerStatus = document.getElementById("timerStatus");
+		const pauseButton = document.getElementById("pauseTimer");
+
+		let exerciseTime, breakTime, repetitions, currentRep, isExercise, timer, isPaused = false;
+
 		function startTimer() {
-			//운동시간, 브레이크 시간 받고
-			//운동 시간 끝나면 브레이크 시간 시작하고 reps만큼 반복
-			
 		    exerciseTime = (Number(exerciseMinute.value) * 60) + Number(exerciseSecond.value);
+		    console.log("exerciseTime : " + exerciseTime);
+		    
 		    breakTime = (Number(breakMinute.value) * 60) + Number(breakSecond.value);
-		    repetitions = Number(reps);
-			
+		    console.log("breakTime : " + breakTime);
+		  
+		    repetitions = Number(reps.value);
+		    console.log("repetitions : " + repetitions);
+		    
+		    if (exerciseTime <= 0 || breakTime <= 0 || repetitions <= 0) {
+		        alert("올바른 시간을 입력하세요.");
+		        return;
+		    }
+		    
 		    currentRep = 1;
 		    isExercise = true;
-		    updateTimerDisplay(exerciseTime, breakTime, repetitions);
-		    document.getElementById('timerStatus').textContent = "운동 중 " + currentRep + "/" + repetitions;
-		    timer = setInterval(updateTimer, 1000);
+		    timerStatus.textContent = "운동 중 (" + currentRep + "/" + repetitions + ")";
+		    startCountdown(exerciseTime);
 		}
-		
 
-		function updateTimer() {
-		    let currentTime = Number(document.getElementById('timerDisplay').textContent.replace(':', ''));
-		    if (currentTime > 0) {
-		        currentTime--;
-		        updateTimerDisplay(currentTime);
-		    } else {
-		        if (isExercise) {
-		            isExercise = false;
-		            currentTime = breakTime;
-		            document.getElementById('timerStatus').textContent = '휴식 중 (' + currentRep + '/' + repetitions + ')';
-		        } else {
-		            currentRep++;
-		            if (currentRep > repetitions) {
+		function startCountdown(time) {
+		    clearInterval(timer);
+		    timer = setInterval(function() {
+		        if (!isPaused) {
+		            updateTimerDisplay(time);
+		            if (time <= 0) {
 		                clearInterval(timer);
-		                document.getElementById('timerStatus').textContent = '완료!';
-		                return;
+		                switchPhase();
+		            } else {
+		                time--;
 		            }
-		            isExercise = true;
-		            currentTime = exerciseTime;
-		            document.getElementById('timerStatus').textContent = '운동 중 (' + currentRep + '/' + repetitions + ')';
 		        }
-		        updateTimerDisplay(currentTime);
+		    }, 1000);
+		}
+
+		function switchPhase() {
+		    if (isExercise) {
+		        isExercise = false;
+		        timerStatus.textContent = "휴식 중 (" + currentRep + "/" + repetitions + ")";
+		        startCountdown(breakTime);
+		    } else {
+		        currentRep++;
+		        if (currentRep > repetitions) {
+		            timerStatus.textContent = "완료!";
+		            return;
+		        }
+		        isExercise = true;
+		        timerStatus.textContent = "운동 중 (" + currentRep + "/" + repetitions + ")";
+		        startCountdown(exerciseTime);
 		    }
 		}
 
-		function updateTimerDisplay(exercisetime, breakTime, repetitions) {
-		    let minutes = Math.floor(exercisetime / 60);
-		    console.log("minutes : " + minutes);
-		    let seconds = exercisetime % 60;
-		    console.log("seconds : " + seconds);
-		    document.getElementById('timerDisplay').textContent = 
-		        minutes.toString().padStart(2, '0') + " : " + seconds.toString().padStart(2, '0');
+		function updateTimerDisplay(time) {
+		    let minutes = Math.floor(time / 60);
+		    let seconds = time % 60;
+		    timerDisplay.textContent = ("0" + minutes).slice(-2) + " : " + ("0" + seconds).slice(-2);
 		}
+
+		pauseButton.addEventListener("click", function() {
+		    isPaused = !isPaused;
+		    pauseButton.innerHTML = isPaused ? '<i class="fas fa-play me-2"></i>타이머 시작' : '<i class="fas fa-pause me-2"></i>타이머 중지';
+		    timerStatus.textContent = isPaused ? "타이머 일시 정지됨" : (isExercise ? "운동 중 (" + currentRep + "/" + repetitions + ")" : "휴식 중 (" + currentRep + "/" + repetitions + ")");
+		});
 
 	});
 </script>
