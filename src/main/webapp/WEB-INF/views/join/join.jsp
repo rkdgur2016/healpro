@@ -84,6 +84,10 @@
 		    flex: 1;
 		    margin-top: 0;
 		}
+		.notice{
+			color : red;
+			font-size: 10px;
+		}
 	</style>
 </head>
 <body>
@@ -98,26 +102,32 @@
                     <input type="text" id="userId" name="userId" required style="flex: 2;">
                     <button type="button" id="checkIdButton">중복 체크</button>
                 </div>
+                <p id="id_notice" class="notice">
             </div>
             <div class="form-group">
                 <label for="pw">비밀번호</label>
                 <input type="password" id="pw" name="pw" required>
+                <p id="pw_notice" class="notice">
             </div>
             <div class="form-group">
                 <label for="pwCheck">비밀번호 확인</label>
                 <input type="password" id="pwCheck" name="pwCheck" required>
+                <p id="pw_check_notice" class="notice">
             </div>
             <div class="form-group">
                 <label for="name">닉네임</label>
                 <input type="text" id="name" name="name" required>
+                <p id="name_notice" class="notice">
             </div>
             <div class="form-group">
                 <label for="email">이메일</label>
                 <input type="email" id="email" name="email" required>
+                <p id="email_notice" class="notice">
             </div>
             <div class="form-group">
                 <label for="birth">생년월일</label>
                 <input type="date" id="birth" name="birth" required>
+                <p id="birth_notice" class="notice">
             </div>
             <input type="button" id="signupBtn" class="signup-button" value="회원가입">
         </form>
@@ -164,32 +174,32 @@
 	        let maxDate = date.getDate();
 	        
 			if(isEmpty(idInput.value) == true){
-				alert("사용하실 아이디를 입력하세요.");
+				document.getElementById('id_notice').innerHTML = "사용하실 아이디를 입력하세요.";
 				idInput.focus();
 				return;
 			}
 			if(idInput.value.indexOf(" ") !== -1){
-				alert("아이디에 공백 문자가 있습니다.");
+				document.getElementById('id_notice').innerHTML = "아이디에 공백 문자가 있습니다.";
 				idInput.focus();
 				return;
 			}
 			if(isEmpty(nameInput.value) == true){
-				alert("사용하실 닉네임을 입력하세요.");
+				document.getElementById('name_notice').innerHTML = "사용하실 닉네임을 입력하세요.";
 				nameInput.focus();
 				return;
 			}
 			if(isEmpty(pwInput.value) == true){
-				alert("비밀번호를 입력하세요.");
+				document.getElementById('pw_notice').innerHTML = "비밀번호를 입력하세요.";
 				pwInput.focus();
 				return;
 			}
 			if(isEmpty(pwCheckInput.value) == true){
-				alert("비밀번호를 확인하세요");
+				document.getElementById('pw_check_notice').innerHTML = "비밀번호를 확인하세요";
 				pwCheckInput.focus();
 				return;
 			}
 			if(isEmpty(birthInput.value) == true){
-				alert("생년월일을 입력하세요.");
+				document.getElementById('birth_notice').innerHTML = "생년월일을 입력하세요.";
 				birthInput.focus();
 				return;
 			}
@@ -198,37 +208,37 @@
 	        birthInput.setAttribute("max", maxDate);
 	        
 	        if (birthInput.value < minDate || birthInput.value > maxDate) {
-	            alert("생년월일은" + minDate + "~" + maxDate + "내로 입력 가능합니다.");
+	        	document.getElementById('birth_notice').innerHTML = "생년월일은" + minDate + "~" + maxDate + "내로 입력 가능합니다.";
 
 	            return;
 	        }
 	        
 	        if(idCheckCount != 1){
 				console.log("idCheckCount : " + idCheckCount);
-				alert("아이디 중복을 확인하세요.");
+				document.getElementById('id_notice').innerHTML = "아이디 중복을 확인하세요.";
 				return;
 			}
 			
 			if(pwInput.value !== pwCheckInput.value){
-				alert("비밀번호가 일치하는지 확인하세요.");
+				document.getElementById('pw_notice').innerHTML = "비밀번호가 일치하는지 확인하세요.";
 				pwCheckInput.focus();
 				return;
 			}
 			
 			if(pwInput.value.indexOf(" ") !== -1 || pwCheckInput.value.indexOf(" ") !== -1){
-				alert("비밀번호와 비밀번호 확인에 공백 문자가 있습니다.");
+				document.getElementById('pw_notice').innerHTML = "비밀번호와 비밀번호 확인에 공백 문자가 있습니다.";
 				pwInput.focus();
 				return;
 			}
 
 			if(passwordValidation(pwInput.value) === false ){
-				alert("특수문자나 대소문자를 포함한 8~20자 이내의 비밀번호를 사용하세요."); 
+				document.getElementById('pw_notice').innerHTML = "특수문자와 대소문자를 포함한 8~20자 이내의 비밀번호를 사용하세요.";
 				pwInput.focus();
 				return;	
 			}
 			
 			if(pwInput.value.length < 8 && pwInput.value.length > 20){
-				alert("비밀번호는 8자 이상 20자 이하입니다."); 
+				document.getElementById('pw_notice').innerHTML = "비밀번호는 8자 이상 20자 이하입니다."; 
 				pwInput.focus();
 				return;	
 			}

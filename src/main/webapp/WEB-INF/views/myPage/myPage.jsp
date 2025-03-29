@@ -152,7 +152,6 @@
 <body>
 	<jsp:include page="../header.jsp"></jsp:include>
     <div class="container py-5">
-     	${user}
         <!-- 수정된 프로필 헤더 섹션 -->
         <div class="profile-header">
             <!-- 프로필 이미지 영역 -->
@@ -171,7 +170,7 @@
             
             <!-- 프로필 정보 영역 -->
             <div class="profile-info">
-            	<h1 class="mb-2" style="color : gray;">@${user.userId}</h1>
+            	<h1 class="mb-2" style="color : white;">@${user.userId}</h1>
                 <h2 class="mb-2">${user.name}</h2>
                 <p class="text mb-4" style="color : gray;">${user.email}</p>
                 <div class="profile-stats">
