@@ -10,4 +10,6 @@ public interface UserServiceInterface {
 	public User login(User inVO) throws Exception;
 	
 	public int idCheck(String userid) throws Exception;
+	
+	public int updateProfile(User userProfile) throws Exception;
 }

@@ -31,7 +31,7 @@ public class UserServiceTest implements PLog{
 	
 	@Before
 	public void setUp() throws Exception {
-		userVO01 = new User("lim", "1234", "강혁임", "lim@gmail.com","2001-01-16");
+		userVO01 = new User("lim", "1234", "강혁임", "lim@gmail.com","2001-01-16", "standard_profile");
 		userVO02 = new User("limrkdgur2016", "SS010216!");
 	}
 	

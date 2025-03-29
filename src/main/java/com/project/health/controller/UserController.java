@@ -9,7 +9,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.project.health.domain.User;
 import com.project.health.essential.PLog;
@@ -26,6 +28,21 @@ public class UserController implements PLog{
 		log.debug("┌───────────────────────────┐");
 		log.debug("│ UserController()          │");
 		log.debug("└───────────────────────────┘");
+	}
+
+	@RequestMapping(value = "/profileUpdate.do"
+			   , produces = "text/plain;charset=UTF-8") 
+	@ResponseBody
+	public int profileUpdate(User inVO, @RequestParam(value = "imgFile", required = false) MultipartFile file) throws Exception {
+		log.debug("┌───────────────────────────────────────┐");
+		log.debug("│ UserController : profileUpdate()");
+		log.debug("└───────────────────────────────────────┘");
+		//세션에서 user 가져오고 user.id(pk) 가져와서 user.profile 고치는 식으로
+		//user.profile은 user.profile 유효성 검사 해서 null일 경우 UUID 생성해서 넣고
+		// null이 아닐 경우 기존 프로필 삭제 후 UUID 생성해서 넣기.
+		int outVO  = userService.updateProfile(inVO);
+		
+		return outVO;
 	}
 	
 	@RequestMapping(value="/login.do", method=RequestMethod.POST)

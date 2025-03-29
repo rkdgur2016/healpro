@@ -14,4 +14,5 @@ public interface UserMapper extends WorkDiv<User>{
 	
 	public int idCheck(String userId) throws Exception;
 	
+	public int updateProfile(User userProfile) throws Exception;
 }

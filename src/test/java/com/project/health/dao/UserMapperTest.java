@@ -36,7 +36,7 @@ public class UserMapperTest implements PLog{
 		log.debug("│ setUp()                      │");
 		log.debug("└──────────────────────────────┘");
 		
-		userVO01 = new User("limrkdgur2016", "1234", "강혁임", "limrkdgur2016@gmail.com","2001-01-16");
+		userVO01 = new User("limrkdgur2016", "1234", "강혁임", "limrkdgur2016@gmail.com","2001-01-16", "standard_profile");
 		userVO02 = new User("limrkdgur2016", "SS010216!");
 	}
 	

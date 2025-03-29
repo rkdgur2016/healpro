@@ -2,20 +2,30 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.project.health.mapper.UserMapper">
 	
+	<update id="updateProfile" parameterType="String">
+		UPDATE USER             
+         SET         
+             user_profile = #{userProfile}
+         WHERE                     
+                user_id = #{userId}     
+	</update>
+	
 	<insert id="doRegister" parameterType="User">
         INSERT INTO user ( 
         		user_id,
             	user_pw,
              	user_name,
              	user_email,
-                user_birth
+                user_birth,
+                user_profile
                 )
                 VALUES (
 	        #{userId},
 	        #{userPw},
 	        #{name},
 	        #{email},
-	        DATE_FORMAT(#{birth}, '%Y-%m-%d')
+	        DATE_FORMAT(#{birth}, '%Y-%m-%d'),
+	        #{profile}
         )
     </insert>
     
@@ -26,7 +36,13 @@
     </select>
     
     <select id="login" parameterType="User" resultType="User">
-    	SELECT USER_NO AS userNo, USER_ID AS userId, USER_PW AS userPw, user_name as name, user_email AS email, user_birth AS birth
+    	SELECT USER_NO AS userNo, 
+    			USER_ID AS userId, 
+    			USER_PW AS userPw, 
+    			user_name as name,
+    			user_email AS email, 
+    			user_birth AS birth, 
+    			user_profile AS profile
   		  FROM USER
  		 WHERE USER_ID = #{userId}
    	       AND USER_PW = #{userPw}
