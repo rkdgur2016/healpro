@@ -186,7 +186,6 @@
                     </div>
                 </div>
             </div>
-            
             <!-- 신체 정보 영역 -->
             <div class="body-stats">
                <!-- BMI 표 -->
@@ -290,57 +289,63 @@
 
     <!-- 루틴 추가 모달 -->
     <div class="modal fade" id="addRoutineModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content" style="background-color: var(--card-bg);">
-                <div class="modal-header">
-                    <h5 class="modal-title">운동 루틴 추가</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="routineForm">
-                        <div class="mb-3">
-                            <label class="form-label">루틴 이름</label>
-                            <input type="text" class="form-control" style="background-color: #333; color: white;">
+    <div class="modal-dialog">
+        <div class="modal-content" style="background-color: var(--card-bg);">
+            <div class="modal-header">
+                <h5 class="modal-title">운동 루틴 추가</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="routineForm">
+                    <div class="mb-3">
+                        <label class="form-label">루틴 이름</label>
+                        <input type="text" class="form-control" id="routineName" style="background-color: #333; color: white;" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">운동 내용</label>
+                        <textarea class="form-control" id="routineContent" rows="3" style="background-color: #333; color: white;" required></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">요일 선택</label>
+                        <div class="d-flex flex-wrap gap-2" id="daySelection">
+                            <button type="button" class="btn btn-outline-primary day-btn" data-day="mon">월</button>
+                            <button type="button" class="btn btn-outline-primary day-btn" data-day="tue">화</button>
+                            <button type="button" class="btn btn-outline-primary day-btn" data-day="wed">수</button>
+                            <button type="button" class="btn btn-outline-primary day-btn" data-day="thu">목</button>
+                            <button type="button" class="btn btn-outline-primary day-btn" data-day="fri">금</button>
+                            <button type="button" class="btn btn-outline-primary day-btn" data-day="sat">토</button>
+                            <button type="button" class="btn btn-outline-primary day-btn" data-day="sun">일</button>
                         </div>
-                        <div class="mb-3">
-                            <label class="form-label">운동 내용</label>
-                            <textarea class="form-control" rows="3" style="background-color: #333; color: white;"></textarea>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">요일 선택</label>
-                            <div class="d-flex flex-wrap">
-                                <div class="form-check me-3">
-                                    <input class="form-check-input" type="checkbox" id="monday">
-                                    <label class="form-check-label" for="monday">월</label>
-                                </div>
-                                <!-- 다른 요일 체크박스들... -->
-                            </div>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
-                    <button type="button" class="btn btn-primary">저장</button>
-                </div>
+                        <input type="hidden" id="selectedDays" name="selectedDays">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
+                <button type="button" class="btn btn-primary" id="saveRoutineBtn">저장</button>
             </div>
         </div>
     </div>
+</div>
 
+</body>
+<jsp:include page="../footer.jsp"></jsp:include>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
 $(document).ready(function() {
+	
     // 서버에서 전달받은 BMI 데이터
     const rawBmiData = [
         <c:forEach var="bmi" items="${bmiList}">
         {
-            dateString: '${bmi.date}', // "2024-12-21 13:47:57"
+            dateString: ${bmi.date},
             height: ${bmi.height},
             weight: ${bmi.weight},
             bmi: ${bmi.bmi},
-            state: '${bmi.state}'
+            state: ${bmi.state}
         },
         </c:forEach>
     ];

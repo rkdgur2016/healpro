@@ -12,7 +12,7 @@
   		  FROM USER_BMI
  		 WHERE user_no = #{userNo}
  		 ORDER BY date DESC
- 		 LIMIT 15
+ 		 LIMIT 10
     </select>
     
     <insert id="bmiRecord" parameterType="Bmi">

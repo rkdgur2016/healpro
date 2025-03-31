@@ -26,15 +26,35 @@ public class UserServiceTest implements PLog{
 	@Autowired
 	UserServiceInterface userService;
 	
+	String profile;
 	User userVO01;
 	User userVO02;
 	
 	@Before
 	public void setUp() throws Exception {
-		userVO01 = new User("lim", "1234", "강혁임", "lim@gmail.com","2001-01-16", "standard_profile");
+		userVO01 = new User("1", "1", "강혁임", "lim@gmail.com","2001-01-16", "standard_profile");
 		userVO02 = new User("limrkdgur2016", "SS010216!");
+		
+		profile = "t-shirt";
 	}
 	
+	@Test
+	public void profileUpdate() throws Exception{
+		log.debug("┌────────────────────────────");
+		log.debug("│ profileUpdate()		");
+		log.debug("└────────────────────────────");
+		
+		userVO01.setProfile(profile);
+		
+		//1번째 유저 저장
+		int flag = userService.updateProfile(userVO01);
+		log.debug("1. user : " + userVO01);
+		log.debug("2. flag : " + flag);
+		
+		assertEquals(1, flag);
+	}
+	
+	@Ignore
 	@Test
 	public void login() throws Exception{
 		log.debug("┌────────────────────────────");

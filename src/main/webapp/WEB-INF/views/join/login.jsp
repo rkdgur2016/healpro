@@ -79,7 +79,7 @@
             <form action="#" method="post">
                 <div class="mb-3">
                     <label for="username" class="form-label">아이디</label>
-                    <input type="text" class="form-control" id="userId" name="userId" required>
+                    <input type="text" class="form-control" id="userId" name="userId" required autofocus>
                 </div>
                 <div class="mb-3">
                     <label for="password" class="form-label">비밀번호</label>

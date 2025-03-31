@@ -2,12 +2,12 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.project.health.mapper.UserMapper">
 	
-	<update id="updateProfile" parameterType="String">
+	<update id="updateProfile" parameterType="User">
 		UPDATE USER             
          SET         
-             user_profile = #{userProfile}
+             user_profile = #{profile}
          WHERE                     
-                user_id = #{userId}     
+                user_id = #{userId}
 	</update>
 	
 	<insert id="doRegister" parameterType="User">

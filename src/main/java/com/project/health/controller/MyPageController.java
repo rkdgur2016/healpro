@@ -42,28 +42,4 @@ public class MyPageController implements PLog{
 		log.debug("└───────────────────────────");
 	}
 	
-	@GetMapping(value = "/myPage.do")
-	public String moveToMyPage(HttpSession session, Model model) throws Exception {
-		
-		String viewName = "myPage/myPage";
-		
-		if (session != null) {
-	        try {
-	        	log.debug("session : " + session);
-	        	
-	        	User user = (User) session.getAttribute("user");
-	            List<Bmi> bmiList = bmiService.bmiList(user.getUserNo());
-
-                model.addAttribute("bmiList", bmiList);
-
-	        } catch (Exception e) {
-	            log.debug("세션이 없습니다.");
-	        }
-	    } else {
-	        log.debug("세션이 없습니다.");
-	    }
-		
-		return viewName;
-	}
-	
 }

@@ -7,6 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>회원가입</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
     <script src="../resources/js/jquery_3_7_1.js"></script>
     <script src="../resources/js/essential.js"></script>
 	<style>
@@ -133,7 +134,6 @@
         </form>
     </div>
 </body>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 <jsp:include page="../footer.jsp"></jsp:include>
 <script>
 	document.addEventListener("DOMContentLoaded", function(){
@@ -149,7 +149,7 @@
 		
 		const signupBtn = document.querySelector('#signupBtn');
 		const idCheckBtn =  document.querySelector("#checkIdButton");
-		
+	        
 		//이벤트 리스너
 		signupBtn.addEventListener("click",function(event){
 			join();
@@ -159,14 +159,12 @@
 			idCheck();
 		});
 		
+		function auto_focus_setTimeout() {
+			  setTimeout( function(){ $('#userId').focus();}, 50 );
+			}
+			
 		function join() {
 			console.log("join()");
-			
-			console.log(idInput.value);
-			console.log(pwInput.value);
-			console.log(nameInput.value);
-			console.log(emailInput.value);
-			console.log(birthInput.value);
 			
 			const date = new Date();
 			
@@ -338,5 +336,3 @@
 	});
 </script>
 </html>
-
-

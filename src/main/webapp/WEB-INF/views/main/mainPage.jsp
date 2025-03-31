@@ -188,91 +188,120 @@
 <body>
 	<jsp:include page="../header.jsp"></jsp:include>
   	<div class="container mt-4">
-        <div class="row">
-            <!-- BMI 측정기 -->
-            <div class="col-md-6">
-                <div class="card">
-                    <div class="card-body">
-                        <h6 class="card-title text-center">BMI 계산기</h6>
-                        <div class="row g-1">
-                            <div class="col-6">
-                                <input type="number" id="height" class="form-control" placeholder="키(cm)">
-                            </div>
-                            <div class="col-6">
-                                <input type="number" id="weight" class="form-control" placeholder="몸무게(kg)">
-                            </div>
+    <div class="row">
+        <!-- 첫 번째 열: BMI 계산기, BMI 지수, BMI 기록 -->
+        <div class="col-md-4">
+            <!-- BMI 계산기 -->
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h6 class="card-title text-center">BMI 계산기</h6>
+                    <div class="row g-1">
+                        <div class="col-6">
+                            <input type="number" id="height" class="form-control" placeholder="키(cm)">
                         </div>
-                        <div class="d-flex justify-content-between mt-2">
-                            <input type="button" class="btn btn-primary btn-sm" id="calculateBMI" value="계산">
-                            <input type="button" class="btn btn-secondary btn-sm" id="saveBMI" value="기록">
-                        </div>
-                        <div id="bmiResult" class="result mt-2">BMI : <a id="bmiResultA"></a></div>
-                        <div id="BMI_category" class="result mt-2">비만도 : <a id="BMI_categoryA"></a></div>
-                    </div>
-                </div>
-
-                <!-- BMI 지수 표시 -->
-                <div class="card mt-3">
-                    <div class="card-body">
-                        <h6 class="card-title text-center">BMI 지수</h6>
-                        <div class="bmi-scale">
-                            <div id="bmiIndicator" class="bmi-indicator"></div>
-                            <div class="bmi-category" style="flex-grow: 1;">
-                                <div class="bmi-label">저체중</div>
-                                <div class="bmi-range">&lt; 18.5</div>
-                            </div>
-                            <div class="bmi-category" style="flex-grow: 1;">
-                                <div class="bmi-label">정상</div>
-                                <div class="bmi-range">18.5 - 23.0</div>
-                            </div>
-                            <div class="bmi-category" style="flex-grow: 1;">
-                                <div class="bmi-label">과체중</div>
-                                <div class="bmi-range">23 - 25</div>
-                            </div>
-                            <div class="bmi-category" style="flex-grow: 1;">
-                                <div class="bmi-label">비만</div>
-                                <div class="bmi-range">&ge; 25</div>
-                            </div>
+                        <div class="col-6">
+                            <input type="number" id="weight" class="form-control" placeholder="몸무게(kg)">
                         </div>
                     </div>
+                    <div class="d-flex justify-content-between mt-2">
+                        <input type="button" class="btn btn-primary btn-sm" id="calculateBMI" value="계산">
+                        <input type="button" class="btn btn-secondary btn-sm" id="saveBMI" value="기록">
+                    </div>
+                    <div id="bmiResult" class="result mt-2">BMI : <a id="bmiResultA"></a></div>
+                    <div id="BMI_category" class="result mt-2">비만도 : <a id="BMI_categoryA"></a></div>
                 </div>
+            </div>
 
-                <!-- BMI 기록 -->
-                <div class="card mt-3">
-                    <div class="card-body">
-                        <h6 class="card-title text-center">BMI 기록</h6>
-                        <div class="table-responsive">
-                            <table class="table table-dark table-striped table-sm">
-                                <thead>
-                                    <tr>
-                                        <th>날짜</th>
-                                        <th>키 (cm)</th>
-                                        <th>몸무게 (kg)</th>
-                                        <th>BMI</th>
-                                        <th>비만도</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <c:forEach var="bmi" items="${bmiList}">
-                                        <tr>
-                                            <td>${bmi.date}</td>
-                                            <td>${bmi.height}</td>
-                                            <td>${bmi.weight}</td>
-                                            <td>${bmi.bmi}</td>
-                                            <td>${bmi.state}</td>
-                                        </tr>
-                                    </c:forEach>
-                                </tbody>
-                            </table>
-                        </div>
+            <!-- BMI 지수 -->
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h6 class="card-title text-center">BMI 지수</h6>
+                    <div class="bmi-scale">
+                        <!-- BMI 지표 표시 -->
+                        <div id="bmiIndicator" class="bmi-indicator"></div>
+                        <!-- 범위 표시 -->
+                        <div class="bmi-category"><span>저체중</span><br><small>&lt; 18.5</small></div>
+                        <div class="bmi-category"><span>정상</span><br><small>18.5 - 23.0</small></div>
+                        <div class="bmi-category"><span>과체중</span><br><small>23 - 25</small></div>
+                        <div class="bmi-category"><span>비만</span><br><small>&ge; 25</small></div>
                     </div>
                 </div>
             </div>
-            <!-- 운동 타이머 및 추천 -->
-            <div class="col-md-6">
-			    <div class="card">
-			        <div class="card-body">
-			            <h5 class="card-title text-center mb-4">운동 타이머</h5>
+
+            <!-- BMI 기록 -->
+            <div class="card">
+                <div class="card-body">
+                    <h6 class="card-title text-center">BMI 기록</h6>
+                    <table class="table table-dark table-striped table-sm">
+                        <thead>
+                            <tr>
+                                <th>날짜</th>
+                                <th>키 (cm)</th>
+                                <th>몸무게 (kg)</th>
+                                <th>BMI</th>
+                                <th>비만도</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- 서버에서 데이터를 받아오는 부분 -->
+                            <c:forEach var="bmi" items="${bmiList}">
+                                <tr>
+                                    <td>${bmi.date}</td>
+                                    <td>${bmi.height}</td>
+                                    <td>${bmi.weight}</td>
+                                    <td>${bmi.bmi}</td>
+                                    <td>${bmi.state}</td>
+                                </tr>
+                            </c:forEach>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- 두 번째 열: 운동 이미지와 추천 운동 리스트 -->
+        <div class="col-md-4">
+                       <!-- 추천 운동 리스트 -->
+            <div class="card">
+                <div class="card-body">
+                    <h6 class="card-title text-center">추천 운동 리스트</h6>
+                    <!-- 운동 카테고리 선택 -->
+                    <select id="exercise_category" class="form-select mb-2">
+                        <option value="" hidden>운동 카테고리를 선택하세요</option>
+                        <!-- 서버에서 가져온 카테고리 리스트 -->
+                        <c:forEach var="exerciseCategory" items="${exerciseCategory}">
+                            <option value="${exerciseCategory.id}">${exerciseCategory.name}</option>
+                        </c:forEach>
+                    </select>
+
+                    <!-- 운동 부위 선택 -->
+                    <select id="exercise_part" class="form-select mb-2" style="display:none;"></select>
+
+                    <!-- 운동 상세 선택 -->
+                    <select id="exercise" class="form-select mb-2" style="display:none;"></select>
+
+                    <!-- 선택된 운동 리스트 -->
+                    <ul id="exerciseList" class="list-group mt-2"></ul>
+                </div>
+            </div>
+             <!-- 운동 이미지 -->
+            <div class="card mb-3">
+                <img src="../resources/img/1698480571234.jfif" alt="exercise_img"
+                     style="
+                         max-width: 100%;
+                         height: auto;
+                         object-fit: contain;
+                         border-radius: 10px;">
+            </div>
+        </div>
+
+        <!-- 세 번째 열: 운동 타이머 -->
+        <div class="col-md-4">
+            <!-- 타이머 설정 -->
+            <div class="card mb-3">
+                <div class="card-body">
+                    <!-- 타이머 설정 제목 -->
+                    <h5 class="card-title text-center mb-4">운동 타이머</h5>
 			            <div class="row g-3">
 			                <div class="col-md-6">
 			                    <label for="exercise_timer" class="form-label">운동 시간</label>
@@ -303,38 +332,11 @@
 			                <div id="timerDisplay" class="display-4 fw-bold">00:00</div>
 			                <div id="timerStatus" class="display-7 fw-bold">대기 중</div>
 			            </div>
-			        </div>
+                 	</div>
 			    </div>
-			</div>
-			<!-- 중앙 이미지 섹션 -->
-			<div class="card mt-3">
-			    <div class="card-body text-center">
-			        <img src="../resources/img/1698480571234.jfif" alt="exercise_img" style="max-width: 400px; max-height: 300px; width: auto; height: auto; object-fit: contain;">
-			    </div>
-			</div>
-
-                <!-- 운동 추천 섹션 -->
-                <div class="card mt-3">
-                    <div class="card-body">
-                        <h6 class="card-title text-center">운동 추천 리스트</h6>
-                        <div class="form-group">
-                            <label for="exercise_category">운동 종류를 선택하세요.</label>
-                            <select id="exercise_category" class="form-select">
-                                <option value="" hidden>종류를 선택하세요.</option>
-                                <c:forEach var="exerciseCategory" items="${exerciseCategory}">
-                                    <option value="${exerciseCategory.id}">${exerciseCategory.name}</option>
-                                </c:forEach>
-                            </select>
-                            <select id="exercise_part" class="form-select mt-2" style="display:none;"></select>
-                            <select id="exercise" class="form-select mt-2" style="display:none;"></select>
-                        </div>
-                        <ul id="exerciseList" class="list-group mt-2"></ul>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+			</div>​
 </body>
+<jsp:include page="../footer.jsp"></jsp:include>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
 <script>
@@ -615,7 +617,9 @@
             const fullPath = contextPath + exerciseCategoryText + "/" + exercisePartText + "/" +exerciseText + ".png";
             
             const exerciseImage = document.querySelector("img[alt='exercise_img']");
+            
             exerciseImage.src = fullPath;
+            console.log(exerciseImage.src)
 		}
 		
 		const exerciseMinute = document.getElementById("exercise_minutes");
@@ -696,7 +700,5 @@
 
 	});
 </script>
-<!-- Footer -->
-<jsp:include page="../footer.jsp"></jsp:include>
 </html>
 

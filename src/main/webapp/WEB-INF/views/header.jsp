@@ -29,7 +29,7 @@
 				     		<a class="nav-link">${user.name}님! 환영합니다.</a>
 				     	</li>
 				     	<li class="nav-item">
-							<a class="nav-link" href="/health/myPage/myPage.do">마이페이지</a>
+							<a class="nav-link" href="/health/user/myPage.do">마이페이지</a>
 						</li>
 				     	<li class="nav-item">
 							<a class="nav-link" href="/health/user/logout.do">로그아웃</a>

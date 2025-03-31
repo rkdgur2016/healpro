@@ -11,5 +11,5 @@ public interface UserServiceInterface {
 	
 	public int idCheck(String userid) throws Exception;
 	
-	public int updateProfile(User userProfile) throws Exception;
+	public int updateProfile(User user) throws Exception;
 }

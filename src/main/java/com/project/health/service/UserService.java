@@ -50,12 +50,12 @@ public class UserService implements UserServiceInterface, PLog{
 	}
 
 	@Override
-	public int updateProfile(User inVO) throws Exception {
+	public int updateProfile(User user) throws Exception {
 		
-		log.debug("1. param : " + inVO);
-		int outVO = userMapper.updateProfile(inVO);
-		log.debug("user : " + outVO);
+		log.debug("1. param : " + user);
+		int output = userMapper.updateProfile(user);
+		log.debug("2. flag : " + output);
 		
-		return outVO;
+		return output;
 	}
 }
