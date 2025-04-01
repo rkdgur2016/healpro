@@ -11,6 +11,6 @@
 </style>
 <footer>
 <div class="footer">
-  <p>&copy; 2024 건강관리 웹사이트 | 모든 권리 보유</p>
+  <p>&copy; Body Weight Trainning Manager | 모든 권리 보유</p>
 </div>
 </footer>

@@ -16,7 +16,7 @@
 <head>
 	<nav class="navbar navbar-expand-lg navbar-dark">
 		<div class="container-fluid">
-			<a class="navbar-brand" href="/health/main/main.do">건강관리 웹사이트</a>
+			<a class="navbar-brand" href="/health/main/main.do">Body Weight Trainning Manager</a>
 			<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
 			  aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
 			<span class="navbar-toggler-icon"></span>
