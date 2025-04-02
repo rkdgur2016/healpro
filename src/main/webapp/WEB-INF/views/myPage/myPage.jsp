@@ -11,6 +11,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Fitness Tracker - My Page</title>
+    <script src="../resources/js/jquery_3_7_1.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.css" rel="stylesheet">
     <style>
@@ -147,6 +148,85 @@
             background-color: var(--primary);
             color: white;
         }
+        /* 셀렉트 박스 최소 너비 설정 */
+		.form-select {
+		    min-width: 120px;
+		    white-space: nowrap;
+		}
+		
+		/* 모바일 대응 미디어쿼리 */
+		@media (max-width: 768px) {
+		    .d-flex {
+		        flex-wrap: wrap !important;
+		    }
+		    .form-select {
+		        flex-basis: 100% !important;
+		    }
+		}
+		
+		/* 추가된 라인 구분을 위한 스타일 */
+		.d-flex.mt-2 {
+		    border-bottom: 1px dashed #ddd;
+		    padding-bottom: 10px;
+		}
+		
+		/* 버튼 위치 조정 */
+		#addLineBtn {
+		    margin-left: auto;
+		    display: block;
+		    width: fit-content;
+		}
+		/* 인덱스 뱃지 스타일 */
+		.index-badge {
+		    background: #6c757d;
+		    color: white;
+		    width: 30px;
+		    height: 30px;
+		    border-radius: 50%;
+		    display: flex;
+		    align-items: center;
+		    justify-content: center;
+		    font-weight: bold;
+		    flex-shrink: 0;
+		}
+		
+		/* 비활성화 시 회색 처리 */
+		select:disabled {
+		    background-color: #e9ecef !important;
+		    cursor: not-allowed;
+		}
+		/* 인덱스 뱃지 스타일링 */
+		.index-badge {
+		    background: #6c757d;
+		    color: white;
+		    width: 28px;
+		    height: 28px;
+		    border-radius: 50%;
+		    display: flex;
+		    align-items: center;
+		    justify-content: center;
+		    flex-shrink: 0;
+		}
+		
+		/* 라인 구분선 */
+		.line:not(:last-child) {
+		    border-bottom: 1px solid #dee2e6;
+		    padding-bottom: 10px;
+		}
+		/* ID 충돌 방지 */
+		.line-container select { 
+		    flex: 1; 
+		    min-width: 120px;
+		}
+		
+		/* 인덱스 스타일 유지 */
+		.index-badge {
+		    background: #6c757d;
+		    width: 30px;
+		    height: 30px;
+		}
+						
+		        
     </style>
 </head>
 <body>
@@ -298,13 +378,33 @@
             <div class="modal-body">
                 <form id="routineForm">
                     <div class="mb-3">
-                        <label class="form-label">루틴 이름</label>
+                        <label class="form-label">루틴명</label>
                         <input type="text" class="form-control" id="routineName" style="background-color: #333; color: white;" required>
                     </div>
-                    <div class="mb-3">
-                        <label class="form-label">운동 내용</label>
-                        <textarea class="form-control" id="routineContent" rows="3" style="background-color: #333; color: white;" required></textarea>
-                    </div>
+                    <div class="card-body">
+					    <h6 class="card-title text-center">나의 운동 리스트 만들기</h6>
+					    <!-- 버튼 그룹 -->
+					    <div class="d-flex justify-content-between mb-3">
+					        <button id="confirmBtn" class="btn btn-success">결정</button>
+					        <button id="addLineBtn" class="btn btn-primary">+ 라인 추가</button>
+					    </div>
+					    <!-- Flex 컨테이너 추가 -->
+					     <div class="d-flex gap-2 w-100 align-items-center mb-2">
+        					<span class="index-badge">1</span>
+					        <select id="exercise_category" class="form-select flex-grow-1">
+					            <option value="" hidden>운동 카테고리를 선택하세요</option>
+					            <c:forEach var="exerciseCategory" items="${exerciseCategory}">
+					                <option value="${exerciseCategory.id}">${exerciseCategory.name}</option>
+					            </c:forEach>
+					        </select>
+						        <select id="exercise_part" class="form-select flex-grow-1 exercise_part" style="display:none"></select>
+						        <select id="exercise" class="form-select flex-grow-1 exercise" style="display:none"></select>
+						    </div>
+										<!-- 추가 라인 위치 -->
+					    <div id="dynamicLines"></div>
+					    <!-- 선택된 운동 리스트 -->
+					    <ul id="exerciseList" class="list-group mt-2"></ul>
+					</div>
                     <div class="mb-3">
                         <label class="form-label">요일 선택</label>
                         <div class="d-flex flex-wrap gap-2" id="daySelection">
@@ -318,6 +418,7 @@
                         </div>
                         <input type="hidden" id="selectedDays" name="selectedDays">
                     </div>
+					</div>
                 </form>
             </div>
             <div class="modal-footer">
@@ -335,175 +436,213 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-$(document).ready(function() {
+document.addEventListener("DOMContentLoaded", function(){
 	
-    // 서버에서 전달받은 BMI 데이터
-    const rawBmiData = [
-        <c:forEach var="bmi" items="${bmiList}">
-        {
-            dateString: ${bmi.date},
-            height: ${bmi.height},
-            weight: ${bmi.weight},
-            bmi: ${bmi.bmi},
-            state: ${bmi.state}
-        },
-        </c:forEach>
-    ];
+    const selectCategoryBtn = document.querySelector("#exercise_category");
+	const selectPartBtn = document.querySelector("#exercise_part");
+	const exerciseBtn = document.querySelector("#exercise");
+	
+	selectCategoryBtn.addEventListener('change', function(event){
+		console.log("selectCategoryBtn click");			
+		categoryOption = event.target.value
+		console.log("option value : " + categoryOption);
+		selectCategory(categoryOption);
+	});
+	
+	selectPartBtn.addEventListener('change', function(event){
+		console.log("selectPartBtn click");
+		partOption = event.target.value
+		console.log("option value : " + partOption);
+		selectPart(partOption);
+	});
+	
+	exerciseBtn.addEventListener('change', function(event){
+		console.log("exerciseBtn click");
+		imgLoading();
+	});
+	
+	function selectPart(partOption) {
+		if (categoryOption !== null) {
+			$.ajax({
+	             type: "POST", 
+	             url:"/health/main/selectPart.do",
+	             async:"true",
+	             dataType:"html",
+	             data:{
+	                 "id" : partOption
+	             },             	 
+	             success:function(response){//통신 성공
+	                 console.log(" 통신 성공 : " + response);
+	             	
+	             	// exercise_part <select>에 동적으로 옵션 추가
+	                 const exerciseSelect = document.querySelector("#exercise");
+	                 exerciseSelect.innerHTML = ""; // 기존 옵션 초기화
 
-    // Date 객체로 변환하고 년, 월, 일 정보 추가
-    const bmiData = rawBmiData.map(item => {
-        const dateParts = item.dateString.split(' ')[0].split('-');
-        const timeParts = item.dateString.split(' ')[1].split(':');
-        
-        const dateObj = new Date(
-            parseInt(dateParts[0]), // 년
-            parseInt(dateParts[1]) - 1, // 월 (0-based)
-            parseInt(dateParts[2]), // 일
-            parseInt(timeParts[0]), // 시
-            parseInt(timeParts[1]), // 분
-            parseInt(timeParts[2])  // 초
-        );
-        
-        return {
-            date: dateObj,
-            year: dateObj.getFullYear(),
-            month: dateObj.getMonth() + 1, // 1-12로 조정
-            day: dateObj.getDate(),
-            height: item.height,
-            weight: item.weight,
-            bmi: item.bmi,
-            state: item.state
-        };
-    });
+	                 // 기본 옵션 추가
+	                 const defaultOption = document.createElement("option");
+	                 defaultOption.value = "";
+	                 defaultOption.textContent = "운동 종류를 선택하세요.";
+	                 exerciseSelect.appendChild(defaultOption);
 
-    // 년도 필터 초기화
-    function initYearFilter() {
-        const yearSet = new Set();
-        bmiData.forEach(item => yearSet.add(item.year));
-        
-        const sortedYears = Array.from(yearSet).sort((a, b) => b - a); // 최신년도 먼저
-        $('#yearFilter').empty().append('<option value="all">전체 년도</option>');
-        
-        sortedYears.forEach(year => {
-            $('#yearFilter').append(`<option value="${year}">${year}년</option>`);
-        });
-    }
+	                 // 응답 데이터에서 exercisePart를 이용하여 옵션 추가
+	                 const parsingData = JSON.parse(response)
+	                 parsingData.forEach(function (exercise) {
+	                     const option = document.createElement("option");
+	                     option.value = exercise.id; 
+	                     option.textContent = exercise.name; 
+	                     exerciseSelect.appendChild(option);
+	                 });
 
-    // 월 필터 업데이트
-    function updateMonthFilter() {
-        const selectedYear = $('#yearFilter').val();
-        $('#monthFilter').prop('disabled', selectedYear === 'all');
-        
-        if (selectedYear === 'all') {
-            $('#monthFilter').empty().append('<option value="all">전체 월</option>');
-            return;
-        }
-        
-        const monthSet = new Set();
-        bmiData.filter(item => item.year == selectedYear)
-               .forEach(item => monthSet.add(item.month));
-        
-        const sortedMonths = Array.from(monthSet).sort((a, b) => a - b);
-        $('#monthFilter').empty().append('<option value="all">전체 월</option>');
-        
-        sortedMonths.forEach(month => {
-            $('#monthFilter').append(`<option value="${month}">${month}월</option>`);
-        });
-    }
+	                 // exercise_part <select>를 표시
+	                 exerciseSelect.style.display = "block";
+	                 
+	                 
+		         },
+	             error:function(response){//실패시 처리
+	                 console.log("통신 실패 :"+response.text);
+	                 alert("통신에 실패했습니다.");
+	             }
+	         });
+			
+			 
+		} else {
+		  alert("운동 부위를 선택해주세요.");
+		}
+	}
 
-    // 일 필터 업데이트
-    function updateDayFilter() {
-        const selectedYear = $('#yearFilter').val();
-        const selectedMonth = $('#monthFilter').val();
-        $('#dayFilter').prop('disabled', selectedMonth === 'all' || selectedYear === 'all');
-        
-        if (selectedMonth === 'all' || selectedYear === 'all') {
-            $('#dayFilter').empty().append('<option value="all">전체 일</option>');
-            return;
-        }
-        
-        const daySet = new Set();
-        bmiData.filter(item => item.year == selectedYear && item.month == selectedMonth)
-               .forEach(item => daySet.add(item.day));
-        
-        const sortedDays = Array.from(daySet).sort((a, b) => a - b);
-        $('#dayFilter').empty().append('<option value="all">전체 일</option>');
-        
-        sortedDays.forEach(day => {
-            $('#dayFilter').append(`<option value="${day}">${day}일</option>`);
-        });
-    }
+	function selectCategory(categoryOption) {
+		
+		if (categoryOption !== null) {
+			$.ajax({
+	             type: "POST", 
+	             url:"/health/main/selectCategory.do",
+	             async:"true",
+	             dataType:"html",
+	             data:{
+	                 "id" : categoryOption
+	             },             	 
+	             success:function(response){//통신 성공
+	                 console.log(" 통신 성공 : " + response);
+	             	
+	             	// exercise_part <select>에 동적으로 옵션 추가
+	                 const exercisePartSelect = document.querySelector("#exercise_part");
+	                 exercisePartSelect.innerHTML = ""; // 기존 옵션 초기화
 
-    // 차트 업데이트
-    function updateChart() {
-        const year = $('#yearFilter').val();
-        const month = $('#monthFilter').val();
-        const day = $('#dayFilter').val();
-        
-        // 데이터 필터링
-        let filteredData = bmiData;
-        
-        if (year !== 'all') {
-            filteredData = filteredData.filter(item => item.year == year);
-        }
-        if (month !== 'all') {
-            filteredData = filteredData.filter(item => item.month == month);
-        }
-        if (day !== 'all') {
-            filteredData = filteredData.filter(item => item.day == day);
-        }
-        
-        // 날짜 형식 결정
-        let dateFormat;
-        if (day !== 'all') {
-            // 일 단위 선택 시: "12월 21일 13:47" 형식
-            dateFormat = { month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
-        } else if (month !== 'all') {
-            // 월 단위 선택 시: "12월 21일" 형식
-            dateFormat = { month: 'long', day: 'numeric' };
-        } else if (year !== 'all') {
-            // 년 단위 선택 시: "2024년 12월" 형식
-            dateFormat = { year: 'numeric', month: 'long' };
-        } else {
-            // 전체 선택 시: "2024년 12월" 형식
-            dateFormat = { year: 'numeric', month: 'long' };
-        }
-        
-        // 차트 데이터 업데이트
-        const labels = filteredData.map(item => 
-            new Intl.DateTimeFormat('ko-KR', dateFormat).format(item.date)
-        );
-        const bmiValues = filteredData.map(item => item.bmi);
-        
-        // 기존 차트가 있으면 업데이트, 없으면 새로 생성
-        if (window.bmiChart) {
-            window.bmiChart.data.labels = labels;
-            window.bmiChart.data.datasets[0].data = bmiValues;
-            window.bmiChart.update();
-        } else {
-            initChart(labels, bmiValues, filteredData);
-        }
-    }
+	                 // 기본 옵션 추가
+	                 const defaultOption = document.createElement("option");
+	                 defaultOption.value = "";
+	                 defaultOption.textContent = "운동 부위를 선택하세요.";
+	                 exercisePartSelect.appendChild(defaultOption);
 
-    // 초기화
-    initYearFilter();
-    updateMonthFilter();
-    updateDayFilter();
-    updateChart();
-    
-    // 이벤트 리스너 등록
-    $('#yearFilter').change(function() {
-        updateMonthFilter();
-        updateDayFilter();
-        updateChart();
-    });
-    
-    $('#monthFilter').change(function() {
-        updateDayFilter();
-        updateChart();
-    });
-    
-    $('#dayFilter, #filterBtn').change(updateChart);
+	                 // 응답 데이터에서 exercisePart를 이용하여 옵션 추가
+	                 const parsingData = JSON.parse(response)
+	                 parsingData.forEach(function (exercisePart) {
+	                     const option = document.createElement("option");
+	                     option.value = exercisePart.id; // ExercisePart의 id 사용
+	                     option.textContent = exercisePart.name; // ExercisePart의 name 사용
+	                     exercisePartSelect.appendChild(option);
+	                 });
+
+	                 // exercise_part <select>를 표시
+	                 exercisePartSelect.style.display = "block";
+	                 
+		         },
+	             error:function(response){//실패시 처리
+	                 console.log("통신 실패 :"+response.text);
+	                 alert("통신에 실패했습니다.");
+	             }
+	         });
+			
+			 
+		} else {
+		  alert("카테고리를 선택해주세요.");
+		}
+		
+	}
+	
+	function selectPart(partOption) {
+		if (categoryOption !== null) {
+			$.ajax({
+	             type: "POST", 
+	             url:"/health/main/selectPart.do",
+	             async:"true",
+	             dataType:"html",
+	             data:{
+	                 "id" : partOption
+	             },             	 
+	             success:function(response){//통신 성공
+	                 console.log(" 통신 성공 : " + response);
+	             	
+	             	// exercise_part <select>에 동적으로 옵션 추가
+	                 const exerciseSelect = document.querySelector("#exercise");
+	                 exerciseSelect.innerHTML = ""; // 기존 옵션 초기화
+
+	                 // 기본 옵션 추가
+	                 const defaultOption = document.createElement("option");
+	                 defaultOption.value = "";
+	                 defaultOption.textContent = "운동 종류를 선택하세요.";
+	                 exerciseSelect.appendChild(defaultOption);
+
+	                 // 응답 데이터에서 exercisePart를 이용하여 옵션 추가
+	                 const parsingData = JSON.parse(response)
+	                 parsingData.forEach(function (exercise) {
+	                     const option = document.createElement("option");
+	                     option.value = exercise.id; 
+	                     option.textContent = exercise.name; 
+	                     exerciseSelect.appendChild(option);
+	                 });
+
+	                 // exercise_part <select>를 표시
+	                 exerciseSelect.style.display = "block";
+	                 
+	                 
+		         },
+	             error:function(response){//실패시 처리
+	                 console.log("통신 실패 :"+response.text);
+	                 alert("통신에 실패했습니다.");
+	             }
+	         });
+			
+			 
+		} else {
+		  alert("운동 부위를 선택해주세요.");
+		}
+		 
+	}
+	let lineCount = 1;
+	const MAX_LINES = 5;
+
+	document.getElementById('addLineBtn').addEventListener('click', () => {
+	    if(lineCount >= MAX_LINES) {
+	        alert(`최대 ${MAX_LINES}개까지 추가 가능`);
+	        return;
+	    }
+
+	    // 기존 라인 복제 (깊은 복사)[1][2][3]
+	    const originalLine = document.querySelector('.line-container');
+	    const newLine = originalLine.cloneNode(true);
+
+	    // 인덱스 업데이트
+	    lineCount++;
+	    newLine.querySelector('.index-badge').textContent = lineCount;
+
+	    // 셀렉트 박스 초기화
+	    newLine.querySelectorAll('select').forEach((select, index) => {
+	        select.value = '';
+	        select.style.display = index === 0 ? 'block' : 'none'; // 첫 번째만 표시[6]
+	    });
+
+	    // 이벤트 재바인딩
+	    newLine.querySelector('.exercise_category').addEventListener('change', function() {
+	        this.nextElementSibling.style.display = 'block';
+	    });
+
+	    // DOM 추가
+	    document.getElementById('linesContainer').appendChild(newLine);
+	});
+
+	
 });
+
 </script>
 

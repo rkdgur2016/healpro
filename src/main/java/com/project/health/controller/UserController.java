@@ -18,9 +18,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.project.health.domain.Bmi;
+import com.project.health.domain.ExerciseCategory;
 import com.project.health.domain.User;
 import com.project.health.essential.PLog;
 import com.project.health.service.BmiService;
+import com.project.health.service.ExerciseService;
 import com.project.health.service.UserService;
 
 @Controller
@@ -31,6 +33,8 @@ public class UserController implements PLog{
 	UserService userService;
 	@Autowired
 	BmiService bmiService;
+	@Autowired
+	ExerciseService exerciseService;
 	
 	public UserController() {
 		log.debug("┌───────────────────────────┐");
@@ -58,6 +62,9 @@ public class UserController implements PLog{
 	    } else {
 	        log.debug("세션이 없습니다.");
 	    }
+		
+		List<ExerciseCategory> category = exerciseService.selectCategory();
+		model.addAttribute("exerciseCategory", category);
 		
 		return viewName;
 	}

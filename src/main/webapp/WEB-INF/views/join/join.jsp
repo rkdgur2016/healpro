@@ -159,9 +159,6 @@
 			idCheck();
 		});
 		
-		function auto_focus_setTimeout() {
-			  setTimeout( function(){ $('#userId').focus();}, 50 );
-			}
 			
 		function join() {
 			console.log("join()");

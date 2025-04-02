@@ -108,7 +108,16 @@
 		const loginBtn = document.querySelector('#loginBtn');
 		
 		loginBtn.addEventListener("click",function(event){
+			event.preventDefault();
+			console.log("로그인 버튼을 눌렀습니다.")
 			login();
+		});
+		
+		document.addEventListener('keydown',function(event){
+			if (event.keyCode === 13) { 
+				event.preventDefault();
+				login();
+			 } 
 		});
 		
 		function login(){
