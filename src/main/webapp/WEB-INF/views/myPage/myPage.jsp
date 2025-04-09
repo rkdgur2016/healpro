@@ -386,10 +386,10 @@
 					    <!-- 버튼 그룹 -->
 					    <div class="d-flex justify-content-between mb-3">
 					        <button id="confirmBtn" class="btn btn-success">결정</button>
-					        <button id="addLineBtn" class="btn btn-primary">+ 라인 추가</button>
+					        <button id="addLineBtn" class="btn btn-primary" type="button">+ 라인 추가</button>
 					    </div>
 					    <!-- Flex 컨테이너 추가 -->
-					     <div class="d-flex gap-2 w-100 align-items-center mb-2">
+					     <div id="line-container" class="d-flex gap-2 w-100 align-items-center mb-2">
         					<span class="index-badge">1</span>
 					        <select id="exercise_category" class="form-select flex-grow-1">
 					            <option value="" hidden>운동 카테고리를 선택하세요</option>
@@ -400,7 +400,7 @@
 						        <select id="exercise_part" class="form-select flex-grow-1 exercise_part" style="display:none"></select>
 						        <select id="exercise" class="form-select flex-grow-1 exercise" style="display:none"></select>
 						    </div>
-										<!-- 추가 라인 위치 -->
+						<!-- 추가 라인 위치 -->
 					    <div id="dynamicLines"></div>
 					    <!-- 선택된 운동 리스트 -->
 					    <ul id="exerciseList" class="list-group mt-2"></ul>
@@ -443,7 +443,7 @@ document.addEventListener("DOMContentLoaded", function(){
 	const exerciseBtn = document.querySelector("#exercise");
 	
 	selectCategoryBtn.addEventListener('change', function(event){
-		console.log("selectCategoryBtn click");			
+		console.log("selectCategoryBtn click");
 		categoryOption = event.target.value
 		console.log("option value : " + categoryOption);
 		selectCategory(categoryOption);
@@ -456,10 +456,6 @@ document.addEventListener("DOMContentLoaded", function(){
 		selectPart(partOption);
 	});
 	
-	exerciseBtn.addEventListener('change', function(event){
-		console.log("exerciseBtn click");
-		imgLoading();
-	});
 	
 	function selectPart(partOption) {
 		if (categoryOption !== null) {
@@ -560,88 +556,110 @@ document.addEventListener("DOMContentLoaded", function(){
 		
 	}
 	
-	function selectPart(partOption) {
-		if (categoryOption !== null) {
-			$.ajax({
-	             type: "POST", 
-	             url:"/health/main/selectPart.do",
-	             async:"true",
-	             dataType:"html",
-	             data:{
-	                 "id" : partOption
-	             },             	 
-	             success:function(response){//통신 성공
-	                 console.log(" 통신 성공 : " + response);
-	             	
-	             	// exercise_part <select>에 동적으로 옵션 추가
-	                 const exerciseSelect = document.querySelector("#exercise");
-	                 exerciseSelect.innerHTML = ""; // 기존 옵션 초기화
+	
+	const addRoutineModal = document.getElementById('addRoutineModal');
 
-	                 // 기본 옵션 추가
-	                 const defaultOption = document.createElement("option");
-	                 defaultOption.value = "";
-	                 defaultOption.textContent = "운동 종류를 선택하세요.";
-	                 exerciseSelect.appendChild(defaultOption);
+    // Bootstrap 5 모달 이벤트 리스너
+    addRoutineModal.addEventListener('show.bs.modal', function () {
 
-	                 // 응답 데이터에서 exercisePart를 이용하여 옵션 추가
-	                 const parsingData = JSON.parse(response)
-	                 parsingData.forEach(function (exercise) {
-	                     const option = document.createElement("option");
-	                     option.value = exercise.id; 
-	                     option.textContent = exercise.name; 
-	                     exerciseSelect.appendChild(option);
-	                 });
+        // 1. 루틴명 초기화
+        document.getElementById('routineName').value = '';
 
-	                 // exercise_part <select>를 표시
-	                 exerciseSelect.style.display = "block";
-	                 
-	                 
-		         },
-	             error:function(response){//실패시 처리
-	                 console.log("통신 실패 :"+response.text);
-	                 alert("통신에 실패했습니다.");
-	             }
-	         });
-			
-			 
-		} else {
-		  alert("운동 부위를 선택해주세요.");
-		}
-		 
-	}
+        // 2. 동적으로 추가된 라인 제거
+        document.getElementById('dynamicLines').innerHTML = '';
+
+        // 3. index-badge 초기화
+        const indexBadge = document.querySelector('#line-container .index-badge');
+        if (indexBadge) indexBadge.textContent = '1';
+
+        // 4. select 초기화
+        const selects = document.querySelectorAll('#line-container select');
+        selects.forEach((select, index) => {
+            select.value = '';
+            // 첫 번째만 표시, 나머지는 숨김
+            select.style.display = (index === 0) ? 'block' : 'none';
+        });
+
+        // 5. 선택된 요일 초기화
+        document.querySelectorAll('.day-btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
+        document.getElementById('selectedDays').value = '';
+
+        // 6. 운동 리스트 초기화
+        document.getElementById('exerciseList').innerHTML = '';
+
+        // 7. 라인 수 초기화
+        if (typeof lineCount !== 'undefined') {
+            lineCount = 1;
+        }
+
+    });
+	
+    // 루틴 추가 라인 증가 함수 addLineBtn
 	let lineCount = 1;
 	const MAX_LINES = 5;
 
-	document.getElementById('addLineBtn').addEventListener('click', () => {
-	    if(lineCount >= MAX_LINES) {
-	        alert(`최대 ${MAX_LINES}개까지 추가 가능`);
-	        return;
-	    }
-
-	    // 기존 라인 복제 (깊은 복사)[1][2][3]
-	    const originalLine = document.querySelector('.line-container');
-	    const newLine = originalLine.cloneNode(true);
-
-	    // 인덱스 업데이트
-	    lineCount++;
-	    newLine.querySelector('.index-badge').textContent = lineCount;
-
-	    // 셀렉트 박스 초기화
-	    newLine.querySelectorAll('select').forEach((select, index) => {
-	        select.value = '';
-	        select.style.display = index === 0 ? 'block' : 'none'; // 첫 번째만 표시[6]
-	    });
-
-	    // 이벤트 재바인딩
-	    newLine.querySelector('.exercise_category').addEventListener('change', function() {
-	        this.nextElementSibling.style.display = 'block';
-	    });
-
-	    // DOM 추가
-	    document.getElementById('linesContainer').appendChild(newLine);
-	});
-
+	const addBtn = document.getElementById("addLineBtn");
 	
+    addBtn.addEventListener("click", function () {
+        if (lineCount >= MAX_LINES) {
+            alert("최대 " + MAX_LINES + "개까지 추가 가능");
+            return;
+        }
+
+        let originalLine = document.getElementById("line-container");
+        let newLine = originalLine.cloneNode(true); // 깊은 복사
+        lineCount++;
+
+        // 고유 ID 설정
+        const newCategory = newLine.querySelector("#exercise_category");
+        const newPart = newLine.querySelector("#exercise_part");
+        const newExercise = newLine.querySelector("#exercise");
+
+        if (newCategory) {
+            newCategory.id = "exercise_category_" + lineCount;
+        }
+        if (newPart) {
+            newPart.id = "exercise_part_" + lineCount;
+            newPart.style.display = "none";
+        }
+        if (newExercise) {
+            newExercise.id = "exercise_" + lineCount;
+            newExercise.style.display = "none";
+        }
+
+        // 인덱스 뱃지 갱신
+		const badge = newLine.querySelector(".index-badge");
+        if (badge) {
+            badge.textContent = lineCount;
+        }
+
+        // select 초기화
+        const selects = newLine.querySelectorAll("select");
+        for (var i = 0; i < selects.length; i++) {
+            selects[i].value = '';
+            selects[i].style.display = (i === 0) ? 'block' : 'none';
+        }
+
+        // 이벤트 재바인딩 (운동 카테고리 선택 시 운동 부위 표시)
+        const boundCategory = newLine.querySelector("#exercise_category_" + lineCount);
+        if (boundCategory) {
+            boundCategory.addEventListener("change", function () {
+                let next = this.nextElementSibling;
+                if (next) {
+                    next.style.display = "block";
+                }
+            });
+        }
+
+        // DOM에 추가
+        const container = document.getElementById("dynamicLines");
+        if (container) {
+            container.appendChild(newLine);
+        }
+    });
+
 });
 
 </script>

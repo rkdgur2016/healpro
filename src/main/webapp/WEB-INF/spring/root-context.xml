@@ -40,7 +40,7 @@
     <!-- HikariDataSource Bean -->
     <bean id="dataSource" class="com.zaxxer.hikari.HikariDataSource">
         <property name="driverClassName" value="org.mariadb.jdbc.Driver"></property>
-     	<property name="jdbcUrl" value="jdbc:mariadb://health-adviser-project.cbmgm2mw0i0s.us-east-1.rds.amazonaws.com:3306/health_advisor_project"></property>
+     	<property name="jdbcUrl" value="jdbc:mariadb://healthproject0410.cbswikwyck2d.ap-northeast-2.rds.amazonaws.com:3306/health_advisor_project"></property>
         <property name="username" value="limrkdgur2016"></property>
         <property name="password" value="dla010216!"></property>
         
